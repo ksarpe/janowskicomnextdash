@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Code, Terminal, Send, CheckCircle2, Copy } from "lucide-react";
 
 interface IntegrationFormProps {
@@ -11,7 +11,15 @@ export default function IntegrationForm({ clientId }: IntegrationFormProps) {
   const [activeTab, setActiveTab] = useState<"html" | "next" | "dev">("html");
   const [copied, setCopied] = useState(false);
 
-  const widgetUrl = "https://twojadomena.pl/chat-widget.js";
+  const [widgetUrl, setWidgetUrl] = useState(
+    "https://twojadomena.pl/chat-widget.js",
+  );
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setWidgetUrl(`${window.location.origin}/chat-widget.js`);
+    }
+  }, []);
 
   const codes = {
     html: `<!-- Wklej ten kod przed zamknięciem tagu </body> -->\n<script src="${widgetUrl}" data-client-id="${clientId}"></script>`,
