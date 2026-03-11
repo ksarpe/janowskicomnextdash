@@ -1,14 +1,67 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // Używamy stabilnego Postgresa
+}
+
+// ----------------------------------------------------
+// 1. Model Klienta (Właściciela SaaS, np. Mechanika)
+// ----------------------------------------------------
+model Client {
+  id             String   @id @default(uuid()) // Używamy długich UUID, nie zwykłych liczb (1, 2, 3), żeby nikt nie zgadł innych ID
+  email          String   @unique
+  passwordHash   String   // Hasło do logowania do panelu
+  companyName    String
+  
+  // Status płatności/abonamentu
+  subscription   SubscriptionPlan @default(FREE)
+  isActive       Boolean          @default(true) // Jeśli przestanie płacić, dajesz tu 'false' i widget znika
+  
+  createdAt      DateTime @default(now())
+
+  // Relacje
+  widgetConfig   WidgetConfig?
+  messages       Message[]
+}
+
+// ----------------------------------------------------
+// 2. Konfiguracja Widżetu (Wygląd i Bezpieczeństwo)
+// ----------------------------------------------------
+model WidgetConfig {
+  id              String   @id @default(uuid())
+  clientId        String   @unique
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  allowedDomains  String[] @default([])   
+  
+  extraSettings   Json?
+}
+
+// ----------------------------------------------------
+// 3. Wiadomości (Dane wysłane przez użytkowników widżetu)
+// ----------------------------------------------------
+model Message {
+  id          String   @id @default(uuid())
+  clientId    String   
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Kto napisał wiadomość na stronie klienta
+  senderName  String
+  senderEmail String
+  content     String   @db.Text // @db.Text pozwala na bardzo długie wiadomości
+  
+  isRead      Boolean  @default(false) // Czy mechanik odczytał to w swoim panelu
+  createdAt   DateTime @default(now())
+}
+
+// Enum do abonamentów
+enum SubscriptionPlan {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
 }
