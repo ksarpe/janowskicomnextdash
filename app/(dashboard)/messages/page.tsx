@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { MessageSquare, Mail, Clock } from "lucide-react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { Message } from "@prisma/client";
 
 export default async function MessagesPage() {
   const session = await auth();
@@ -36,7 +37,7 @@ export default async function MessagesPage() {
               Brak wiadomości. Twój widget czeka na klientów!
             </p>
           ) : (
-            messages.map((msg) => (
+            messages.map((msg: Message) => (
               <div
                 key={msg.id}
                 className={`p-6 transition-colors hover:bg-gray-50 ${!msg.isRead ? "bg-cyan-50/30" : ""}`}
