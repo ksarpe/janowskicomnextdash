@@ -41,6 +41,7 @@ export async function updateWidgetConfig(
 
     // Odświeżamy cache strony, by formularz od razu pokazał nowe dane
     revalidatePath("/settings");
+    revalidatePath(`/api/widget/config/chat?clientId=${clientId}`);
     return { success: true };
   } catch (error) {
     console.error("Błąd zapisu:", error);

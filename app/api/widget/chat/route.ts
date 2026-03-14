@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { DEFAULT_SETTINGS } from "@/lib/defaultSettings";
 
-// Funkcja pomocnicza do nagłówków CORS
 function setCorsHeaders(res: NextResponse, origin: string) {
   res.headers.set("Access-Control-Allow-Origin", origin);
   res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -13,50 +11,6 @@ function setCorsHeaders(res: NextResponse, origin: string) {
 export async function OPTIONS(request: Request) {
   const origin = request.headers.get("origin") || "*";
   return setCorsHeaders(new NextResponse(null, { status: 204 }), origin);
-}
-
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const clientId = searchParams.get("clientId");
-  const origin = request.headers.get("origin") || "*";
-
-  if (!clientId) {
-    return NextResponse.json({ error: "Brak clientId" }, { status: 400 });
-  }
-
-  try {
-    const config = await prisma.widgetConfig.findUnique({
-      where: { clientId: clientId },
-      include: { client: true },
-    });
-
-    if (!config || !config.client.isActive) {
-      return NextResponse.json({ error: "Nieaktywny widżet" }, { status: 403 });
-    }
-
-    // Pobieramy extraSettings (lub pusty obiekt, jeśli nic tam nie ma)
-    const dbSettings = (config.extraSettings as any) || {};
-
-    // Scalamy domyślne ustawienia z tymi zapisanymi przez klienta w bazie!
-    const mergedSettings = {
-      ...DEFAULT_SETTINGS,
-      ...dbSettings,
-      chat: {
-        ...DEFAULT_SETTINGS.chat,
-        ...(dbSettings.chat || {}),
-      },
-    };
-
-    // Zwracamy kolor ORAZ gotowe, bezpieczne ustawienia
-    return setCorsHeaders(
-      NextResponse.json({
-        settings: mergedSettings,
-      }),
-      origin,
-    );
-  } catch (error) {
-    return NextResponse.json({ error: "Błąd serwera" }, { status: 500 });
-  }
 }
 
 export async function POST(request: Request) {

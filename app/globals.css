@@ -1,24 +1,83 @@
 @import "tailwindcss";
 
+/* =========================================
+   1. BAZOWE ZMIENNE (JASNY TRYB - DOMYŚLNY)
+   ========================================= */
 :root {
+  /* Tło i tekst dla samej strony (opcjonalnie) */
   --background: #ffffff;
   --foreground: #171717;
+
+  /* --- WIDŻET: CHAT --- */
+  --chat-bg: #ffffff;             /* Główne tło */
+  --chat-surface: #f9fafb;        /* Tło nagłówka/inputów */
+  --chat-text: #111827;           /* Główny tekst */
+  --chat-text-muted: #6b7280;     /* Tekst poboczny (labele) */
+  --chat-border: #f3f4f6;         /* Ramki */
+  --chat-accent: #9bd400;         /* Twój limonkowy akcent */
+
+  /* --- WIDŻET: BOOKING --- */
+  --booking-bg: #ffffff;
+  --booking-surface: #ffffff;
+  --booking-text: #171717;
+  --booking-text-muted: #737373;
+  --booking-border: #e5e5e5;
+  --booking-accent: #3b82f6;      /* Np. niebieski akcent */
 }
 
+/* =========================================
+   2. CIEMNY TRYB (Nadpisywanie zmiennych)
+   ========================================= */
+/* Wystarczy dodać klasę "dark" do <body> lub do kontenera widżetu */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* --- WIDŻET: CHAT (DARK) --- */
+  --chat-bg: #222226;
+  --chat-surface: #1a1a1e;
+  --chat-text: #f4f4f5;
+  --chat-text-muted: #a1a1aa;
+  --chat-border: #3f3f46;
+  /* Akcent zostawiamy ten sam, lub lekko zmieniamy pod dark mode */
+  --chat-accent: #a8e500; 
+
+  /* --- WIDŻET: BOOKING (DARK) --- */
+  --booking-bg: #171717;
+  --booking-surface: #262626;
+  --booking-text: #fafafa;
+  --booking-text-muted: #a3a3a3;
+  --booking-border: #404040;
+  --booking-accent: #60a5fa;      /* Jaśniejszy niebieski dla lepszego kontrastu */
+}
+
+/* =========================================
+   3. REJESTRACJA W TAILWIND (v4)
+   ========================================= */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Podpinamy globalne */
+  --color-bg: var(--background);
+  --color-text: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Rejestrujemy kolory Chatu */
+  --color-chat-bg: var(--chat-bg);
+  --color-chat-surface: var(--chat-surface);
+  --color-chat-text: var(--chat-text);
+  --color-chat-muted: var(--chat-text-muted);
+  --color-chat-border: var(--chat-border);
+  --color-chat-accent: var(--chat-accent);
+
+  /* Rejestrujemy kolory Bookingu */
+  --color-booking-bg: var(--booking-bg);
+  --color-booking-surface: var(--booking-surface);
+  --color-booking-text: var(--booking-text);
+  --color-booking-muted: var(--booking-text-muted);
+  --color-booking-border: var(--booking-border);
+  --color-booking-accent: var(--booking-accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Reszta globalnych styli */
 body {
   background: var(--background);
   color: var(--foreground);
