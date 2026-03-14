@@ -6,7 +6,6 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
-  // get current active session from the server
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     redirect("/login");
@@ -19,13 +18,12 @@ export default async function SettingsPage() {
 
   if (!config) {
     return (
-      <div className="p-8 text-red-500">
+      <div className="p-8 text-red-400">
         Nie znaleziono konfiguracji dla tego klienta. Skonfiguruj bazę.
       </div>
     );
   }
 
-  // Magia, o której mówiliśmy: Bezpieczne łączenie danych z bazy z naszym kontraktem DEFAULT_SETTINGS
   const dbSettings = (config.extraSettings as any) || {};
 
   const mergedSettings: WidgetSettings = {
@@ -40,13 +38,12 @@ export default async function SettingsPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Ustawienia Widżetu</h1>
-        <p className="text-gray-500 mt-2">
+        <h1 className="text-3xl font-bold text-text">Ustawienia Widżetu</h1>
+        <p className="text-text-muted mt-2">
           Dostosuj wygląd i zachowanie swojego systemu.
         </p>
       </div>
 
-      {/* Renderujemy nasz interaktywny formularz kliencki i przekazujemy mu dane */}
       <SettingsForm
         clientId={clientId}
         initialDomains={config.allowedDomains}
