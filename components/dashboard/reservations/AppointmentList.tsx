@@ -1,30 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { Reservation } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import { Check, X, Calendar, TrendingUp } from "lucide-react";
-import { ReservationRow } from "./ReservationRow";
+import { AppointmentRow } from "./AppointmentRow";
 import { MiniCalendar } from "./MiniCalendar";
 
 // ── Main component ────────────────────────────────────────────────────────────
 interface Props {
-  reservations: Reservation[];
+  appointments: Appointment[];
   pendingCount: number;
   acceptedCount: number;
   totalCount: number;
 }
 
-export default function ReservationList({
-  reservations,
+export default function AppointmentList({
+  appointments,
   pendingCount,
   acceptedCount,
   totalCount,
 }: Props) {
   const [filteredDay, setFilteredDay] = useState<number | null>(null);
 
-  const displayedReservations =
+  const displayedAppointments =
     filteredDay !== null
-      ? reservations.filter((r) => {
+      ? appointments.filter((r) => {
           try {
             const d = new Date(r.date);
             return (
@@ -36,7 +36,7 @@ export default function ReservationList({
             return false;
           }
         })
-      : reservations;
+      : appointments;
 
   return (
     <div className="space-y-6">
@@ -156,13 +156,12 @@ export default function ReservationList({
               {filteredDay !== null && (
                 <button
                   onClick={() => setFilteredDay(null)}
-                  className="text-[10px] text-text-muted hover:text-text hover:bg-bg-alt px-2 py-1 rounded-lg border transition-colors font-bold flex items-center gap-1"
+                  className="text-[10px] bg-red-500/10 text-text-muted hover:text-text hover:bg-bg-alt px-2 py-1 rounded-lg border transition-colors font-bold flex items-center gap-1"
                   style={{
                     borderColor: "var(--dash-border)",
-                    backgroundColor: "var(--dash-card)",
                   }}
                 >
-                  <X className="w-3 h-3" /> WYCZYŚĆ FILTR
+                  <X className="w-3 h-3 text-red-500" /> WYCZYŚĆ FILTR
                 </button>
               )}
             </div>
@@ -176,7 +175,7 @@ export default function ReservationList({
             )}
           </div>
 
-          {displayedReservations.length === 0 ? (
+          {displayedAppointments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3 flex-1">
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center"
@@ -219,8 +218,8 @@ export default function ReservationList({
                   </tr>
                 </thead>
                 <tbody>
-                  {displayedReservations.map((res) => (
-                    <ReservationRow key={res.id} res={res} />
+                  {displayedAppointments.map((res) => (
+                    <AppointmentRow key={res.id} res={res} />
                   ))}
                 </tbody>
               </table>
@@ -231,7 +230,7 @@ export default function ReservationList({
         {/* Mini Calendar */}
         <div className="xl:col-span-1">
           <MiniCalendar
-            reservations={reservations}
+            appointments={appointments}
             onSeeAll={(day) => setFilteredDay(day)}
           />
         </div>

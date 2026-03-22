@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Reservation } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import { Clock, X } from "lucide-react";
 
 export function MiniCalendar({
-  reservations,
+  appointments,
   onSeeAll,
 }: {
-  reservations: Reservation[];
+  appointments: Appointment[];
   onSeeAll: (day: number) => void;
 }) {
   const [popoverDay, setPopoverDay] = useState<number | null>(null);
@@ -21,13 +21,13 @@ export function MiniCalendar({
   const totalCells = Math.ceil((daysInMonth + offset) / 7) * 7;
 
   const dayHours: Record<number, string[]> = {};
-  reservations.forEach((r) => {
+  appointments.forEach((r) => {
     try {
       const d = new Date(r.date);
       if (d.getMonth() === month && d.getFullYear() === year) {
         const day = d.getDate();
         if (!dayHours[day]) dayHours[day] = [];
-        if (r.time) dayHours[day].push(r.time);
+        if (r.startTime) dayHours[day].push(r.startTime);
       }
     } catch {}
   });

@@ -13,6 +13,8 @@ import {
   Star,
 } from "lucide-react";
 
+import { getInitials, timeAgo } from "@/utils/helpers";
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface ClientProfile {
   key: string; // email or phone as primary key
@@ -21,46 +23,26 @@ interface ClientProfile {
   phone: string | null;
   messageCount: number;
   unreadCount: number;
-  reservationCount: number;
-  acceptedReservations: number;
+  appointmentCount: number;
+  acceptedAppointments: number;
   lastActivity: Date;
   firstContact: Date;
   recentMessage: string | null;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function timeAgo(date: Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins} min temu`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs} godz. temu`;
-  const days = Math.floor(hrs / 24);
-  if (days === 1) return "Wczoraj";
-  return new Date(date).toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "short",
-  });
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
-
 function getActivityLevel(
   messageCount: number,
-  reservationCount: number
+  appointmentCount: number,
 ): { label: string; color: string; bg: string } {
-  const total = messageCount + reservationCount;
+  const total = messageCount + appointmentCount;
   if (total >= 5)
     return { label: "Aktywny", color: "#22c55e", bg: "#22c55e18" };
   if (total >= 2)
-    return { label: "Regularny", color: "var(--primary)", bg: "var(--primary)18" };
+    return {
+      label: "Regularny",
+      color: "var(--primary)",
+      bg: "var(--primary)18",
+    };
   return { label: "Nowy", color: "#64748b", bg: "#64748b18" };
 }
 
@@ -81,7 +63,10 @@ function StatCard({
   return (
     <div
       className="rounded-2xl border p-5 relative overflow-hidden"
-      style={{ backgroundColor: "var(--dash-card)", borderColor: "var(--dash-border)" }}
+      style={{
+        backgroundColor: "var(--dash-card)",
+        borderColor: "var(--dash-border)",
+      }}
     >
       <div
         className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
@@ -109,7 +94,10 @@ function StatCard({
 
 // ── ClientRow ─────────────────────────────────────────────────────────────────
 function ClientRow({ client }: { client: ClientProfile }) {
-  const activity = getActivityLevel(client.messageCount, client.reservationCount);
+  const activity = getActivityLevel(
+    client.messageCount,
+    client.appointmentCount,
+  );
 
   return (
     <tr
@@ -126,7 +114,9 @@ function ClientRow({ client }: { client: ClientProfile }) {
             {getInitials(client.name)}
           </div>
           <div>
-            <p className="text-sm font-bold text-text leading-tight">{client.name}</p>
+            <p className="text-sm font-bold text-text leading-tight">
+              {client.name}
+            </p>
             <p className="text-[11px] text-text-subtle mt-0.5">
               Od{" "}
               {new Date(client.firstContact).toLocaleDateString("pl-PL", {
@@ -166,7 +156,7 @@ function ClientRow({ client }: { client: ClientProfile }) {
           </span>
           <span className="flex items-center gap-1 text-xs font-semibold text-text-muted">
             <Calendar className="w-3.5 h-3.5 text-text-subtle" />
-            {client.reservationCount}
+            {client.appointmentCount}
           </span>
         </div>
       </td>
@@ -209,12 +199,12 @@ export default async function ClientsPage() {
   if (!session?.user?.id) redirect("/login");
   const clientId = session.user.id;
 
-  // Fetch all messages and reservations in parallel
-  const [messages, reservations] = await Promise.all([
+  // Fetch all messages and appointments in parallel
+  const [messages, appointments] = await Promise.all([
     prisma.message
       .findMany({ where: { clientId }, orderBy: { createdAt: "desc" } })
       .catch(() => []),
-    prisma.reservation
+    prisma.appointment
       .findMany({ where: { clientId }, orderBy: { createdAt: "desc" } })
       .catch(() => []),
   ]);
@@ -256,7 +246,7 @@ export default async function ClientsPage() {
     }
   }
 
-  // ── Aggregate reservations by phone ──────────────────────────────────────
+  // ── Aggregate appointments by phone ──────────────────────────────────────
   const byPhone = new Map<
     string,
     {
@@ -269,8 +259,8 @@ export default async function ClientsPage() {
     }
   >();
 
-  for (const res of reservations) {
-    const key = res.senderPhone.replace(/\s/g, "");
+  for (const res of appointments) {
+    const key = res.customerPhone.replace(/\s/g, "");
     const existing = byPhone.get(key);
     if (existing) {
       existing.count++;
@@ -281,8 +271,8 @@ export default async function ClientsPage() {
         existing.first = new Date(res.createdAt);
     } else {
       byPhone.set(key, {
-        name: res.senderName,
-        phone: res.senderPhone,
+        name: res.customerName,
+        phone: res.customerPhone,
         count: 1,
         accepted: res.status === "ACCEPTED" ? 1 : 0,
         first: new Date(res.createdAt),
@@ -303,15 +293,15 @@ export default async function ClientsPage() {
       phone: null,
       messageCount: data.count,
       unreadCount: data.unread,
-      reservationCount: 0,
-      acceptedReservations: 0,
+      appointmentCount: 0,
+      acceptedAppointments: 0,
       lastActivity: data.last,
       firstContact: data.first,
       recentMessage: data.preview,
     });
   }
 
-  // Merge reservations — match by name if no email, else add separately
+  // Merge appointments — match by name if no email, else add separately
   for (const [phoneKey, data] of byPhone) {
     // Try to find an existing profile with the same normalized name
     let matched = false;
@@ -320,8 +310,8 @@ export default async function ClientsPage() {
       const normalizedData = data.name.toLowerCase().trim();
       if (normalizedProfile === normalizedData && !profile.phone) {
         profile.phone = data.phone;
-        profile.reservationCount += data.count;
-        profile.acceptedReservations += data.accepted;
+        profile.appointmentCount += data.count;
+        profile.acceptedAppointments += data.accepted;
         profile.lastActivity =
           data.last > profile.lastActivity ? data.last : profile.lastActivity;
         profile.firstContact =
@@ -338,8 +328,8 @@ export default async function ClientsPage() {
         phone: data.phone,
         messageCount: 0,
         unreadCount: 0,
-        reservationCount: data.count,
-        acceptedReservations: data.accepted,
+        appointmentCount: data.count,
+        acceptedAppointments: data.accepted,
         lastActivity: data.last,
         firstContact: data.first,
         recentMessage: null,
@@ -349,13 +339,16 @@ export default async function ClientsPage() {
 
   // Sort by last activity descending
   const clientList = Array.from(profiles.values()).sort(
-    (a, b) => b.lastActivity.getTime() - a.lastActivity.getTime()
+    (a, b) => b.lastActivity.getTime() - a.lastActivity.getTime(),
   );
 
   // Stats
   const totalUnread = clientList.reduce((s, c) => s + c.unreadCount, 0);
   const totalMessages = clientList.reduce((s, c) => s + c.messageCount, 0);
-  const totalReservations = clientList.reduce((s, c) => s + c.reservationCount, 0);
+  const totalAppointments = clientList.reduce(
+    (s, c) => s + c.appointmentCount,
+    0,
+  );
 
   return (
     <div className="h-full overflow-y-auto">
@@ -379,17 +372,24 @@ export default async function ClientsPage() {
           <StatCard
             label="Wszystkich wiadomości"
             value={totalMessages}
-            sub={totalUnread > 0 ? `${totalUnread} nieprzeczytanych` : "Wszystkie przeczytane"}
+            sub={
+              totalUnread > 0
+                ? `${totalUnread} nieprzeczytanych`
+                : "Wszystkie przeczytane"
+            }
             icon={MessageSquare}
           />
           <StatCard
             label="Wszystkich rezerwacji"
-            value={totalReservations}
+            value={totalAppointments}
             icon={Calendar}
           />
           <StatCard
             label="Powracających"
-            value={clientList.filter((c) => c.messageCount + c.reservationCount > 1).length}
+            value={
+              clientList.filter((c) => c.messageCount + c.appointmentCount > 1)
+                .length
+            }
             sub="Więcej niż 1 kontakt"
             icon={Star}
           />
@@ -398,7 +398,10 @@ export default async function ClientsPage() {
         {/* Table */}
         <div
           className="rounded-2xl border overflow-hidden"
-          style={{ backgroundColor: "var(--dash-card)", borderColor: "var(--dash-border)" }}
+          style={{
+            backgroundColor: "var(--dash-card)",
+            borderColor: "var(--dash-border)",
+          }}
         >
           <div
             className="px-5 py-4 border-b flex items-center justify-between"
@@ -406,7 +409,8 @@ export default async function ClientsPage() {
           >
             <h3 className="text-sm font-bold text-text">Lista kontaktów</h3>
             <span className="text-xs text-text-subtle font-medium">
-              {clientList.length} {clientList.length === 1 ? "kontakt" : "kontaktów"}
+              {clientList.length}{" "}
+              {clientList.length === 1 ? "kontakt" : "kontaktów"}
             </span>
           </div>
 
@@ -416,12 +420,18 @@ export default async function ClientsPage() {
                 className="w-14 h-14 rounded-2xl flex items-center justify-center"
                 style={{ backgroundColor: "var(--primary)10" }}
               >
-                <Users className="w-6 h-6" style={{ color: "var(--primary)" }} />
+                <Users
+                  className="w-6 h-6"
+                  style={{ color: "var(--primary)" }}
+                />
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold text-text mb-1">Brak klientów</p>
+                <p className="text-sm font-bold text-text mb-1">
+                  Brak klientów
+                </p>
                 <p className="text-xs text-text-muted max-w-xs">
-                  Gdy ktoś wyśle wiadomość lub złoży rezerwację przez Twój widget, pojawi się tutaj.
+                  Gdy ktoś wyśle wiadomość lub złoży rezerwację przez Twój
+                  widget, pojawi się tutaj.
                 </p>
               </div>
             </div>
@@ -430,16 +440,20 @@ export default async function ClientsPage() {
               <table className="w-full">
                 <thead>
                   <tr style={{ borderBottom: "1px solid var(--dash-border)" }}>
-                    {["Klient", "Kontakt", "Aktywność", "Ostatni kontakt", "Status"].map(
-                      (h) => (
-                        <th
-                          key={h}
-                          className="text-left text-[10px] font-black uppercase tracking-widest text-text-subtle px-4 py-2.5 first:px-5"
-                        >
-                          {h}
-                        </th>
-                      )
-                    )}
+                    {[
+                      "Klient",
+                      "Kontakt",
+                      "Aktywność",
+                      "Ostatni kontakt",
+                      "Status",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className="text-left text-[10px] font-black uppercase tracking-widest text-text-subtle px-4 py-2.5 first:px-5"
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>

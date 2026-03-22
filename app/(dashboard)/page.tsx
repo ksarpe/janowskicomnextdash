@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   const clientId = session.user.id;
 
   // Cached — served from in-process cache on repeated navigations
-  const { unreadMessages, recentMessages, totalReservations } =
+  const { unreadMessages, recentMessages, totalAppointments } =
     await getDashboardStats(clientId);
 
   return (
@@ -31,9 +31,9 @@ export default async function DashboardPage() {
           />
           <StatCard
             label="Rezerwacje"
-            value={totalReservations}
+            value={totalAppointments}
             icon={Activity}
-            link="/reservations"
+            link="/appointments"
           />
           <StatCard
             label="Aktywnych klientów"

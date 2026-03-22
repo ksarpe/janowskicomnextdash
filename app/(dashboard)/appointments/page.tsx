@@ -1,22 +1,22 @@
-// app/(dashboard)/reservations/page.tsx
+// app/(dashboard)/appointments/page.tsx
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Reservation } from "@prisma/client";
-import ReservationList from "@/components/dashboard/reservations/ReservationList";
-import { getReservations } from "@/lib/queries";
+import { Appointment } from "@prisma/client";
+import { getAppointments } from "@/lib/queries";
 import { todayStr } from "@/utils/helpers";
+import AppointmentList from "@/components/dashboard/reservations/AppointmentList";
 
-export default async function ReservationsPage() {
+export default async function AppointmentsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   const clientId = session.user.id;
 
   // Cached — no new DB query if data was fetched within the last 30 s
-  const reservations: Reservation[] = await getReservations(clientId);
-  const pendingCount = reservations.filter(
+  const appointments: Appointment[] = await getAppointments(clientId);
+  const pendingCount = appointments.filter(
     (r) => r.status === "PENDING",
   ).length;
-  const acceptedCount = reservations.filter(
+  const acceptedCount = appointments.filter(
     (r) => r.status === "ACCEPTED",
   ).length;
 
@@ -49,11 +49,11 @@ export default async function ReservationsPage() {
           )}
         </div>
 
-        <ReservationList
-          reservations={reservations}
+        <AppointmentList
+          appointments={appointments}
           pendingCount={pendingCount}
           acceptedCount={acceptedCount}
-          totalCount={reservations.length}
+          totalCount={appointments.length}
         />
       </div>
     </div>

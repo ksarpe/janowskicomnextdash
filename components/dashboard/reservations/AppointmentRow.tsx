@@ -1,19 +1,19 @@
-import { Reservation } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import { getInitials, formatDate } from "@/utils/helpers";
 import { Clock, Phone, MoreVertical, Check, X } from "lucide-react";
 import { useTransition } from "react";
 import {
-  acceptReservation,
-  rejectReservation,
-} from "@/app/(dashboard)/reservations/actions";
+  acceptAppointment,
+  rejectAppointment,
+} from "@/app/(dashboard)/appointments/actions";
 import { Status, STATUS_CONFIG } from "./definitions";
 
 // ── ActionButton ──────────────────────────────────────────────────────────────
 function ActionButton({
-  reservationId,
+  appointmentId,
   type,
 }: {
-  reservationId: string;
+  appointmentId: string;
   type: "accept" | "reject";
 }) {
   const [isPending, startTransition] = useTransition();
@@ -23,9 +23,9 @@ function ActionButton({
   function handleClick() {
     startTransition(async () => {
       if (isAccept) {
-        await acceptReservation(reservationId);
+        await acceptAppointment(appointmentId);
       } else {
-        await rejectReservation(reservationId);
+        await rejectAppointment(appointmentId);
       }
     });
   }
@@ -48,13 +48,12 @@ function ActionButton({
       ) : (
         <X className="w-3.5 h-3.5" />
       )}
-      {isAccept ? "Akceptuj" : "Odrzuć"}
     </button>
   );
 }
 
-// ── ReservationRow ─────────────────────────────────────────────────────────────
-export function ReservationRow({ res }: { res: Reservation }) {
+// ── AppointmentRow ─────────────────────────────────────────────────────────────
+export function AppointmentRow({ res }: { res: Appointment }) {
   const status = res.status as Status;
   const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.PENDING;
   const isPending = status === "PENDING";
@@ -71,13 +70,12 @@ export function ReservationRow({ res }: { res: Reservation }) {
             className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
             style={{ backgroundColor: "var(--primary)" }}
           >
-            {getInitials(res.senderName)}
+            {getInitials(res.customerName)}
           </div>
           <div>
             <p className="text-sm font-bold text-text leading-tight">
-              {res.senderName}
+              {res.customerName}
             </p>
-            <p className="text-xs text-text-muted mt-0.5">{res.service}</p>
           </div>
         </div>
       </td>
@@ -90,7 +88,7 @@ export function ReservationRow({ res }: { res: Reservation }) {
           </p>
           <p className="text-xs text-text-muted flex items-center gap-1">
             <Clock className="w-3 h-3" />
-            {res.time}
+            {res.startTime}
           </p>
         </div>
       </td>
@@ -99,7 +97,7 @@ export function ReservationRow({ res }: { res: Reservation }) {
       <td className="py-4 px-4">
         <p className="text-sm text-text-muted flex items-center gap-1.5">
           <Phone className="w-3.5 h-3.5 shrink-0" />
-          {res.senderPhone}
+          {res.customerPhone}
         </p>
       </td>
 
@@ -126,8 +124,8 @@ export function ReservationRow({ res }: { res: Reservation }) {
       <td className="py-4 px-4">
         {isPending ? (
           <div className="flex items-center gap-2">
-            <ActionButton reservationId={res.id} type="accept" />
-            <ActionButton reservationId={res.id} type="reject" />
+            <ActionButton appointmentId={res.id} type="accept" />
+            <ActionButton appointmentId={res.id} type="reject" />
           </div>
         ) : (
           <button className="p-1.5 rounded-lg text-text-subtle hover:text-text hover:bg-bg-alt transition-colors opacity-0 group-hover:opacity-100">

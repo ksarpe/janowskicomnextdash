@@ -14,19 +14,17 @@ import { prisma } from "@/lib/db";
 // Use these tags in revalidateTag() calls inside Server Actions / Route Handlers
 export const TAGS = {
   widgetConfig: (clientId: string) => `widget-config-${clientId}`,
-  clientPlan:   (clientId: string) => `client-plan-${clientId}`,
-  messages:     (clientId: string) => `messages-${clientId}`,
-  reservations: (clientId: string) => `reservations-${clientId}`,
-  dashboardStats:(clientId: string) => `dashboard-stats-${clientId}`,
+  clientPlan: (clientId: string) => `client-plan-${clientId}`,
+  messages: (clientId: string) => `messages-${clientId}`,
+  appointments: (clientId: string) => `appointments-${clientId}`,
+  dashboardStats: (clientId: string) => `dashboard-stats-${clientId}`,
 } as const;
 
 // ─── Widget config ─────────────────────────────────────────────────────────────
 export function getWidgetConfig(clientId: string) {
   return unstable_cache(
     () =>
-      prisma.widgetConfig
-        .findUnique({ where: { clientId } })
-        .catch(() => null),
+      prisma.widgetConfig.findUnique({ where: { clientId } }).catch(() => null),
     [`widget-config-${clientId}`],
     { revalidate: 60, tags: [TAGS.widgetConfig(clientId)] },
   )();
@@ -43,8 +41,8 @@ export function getWidgetThemeColor(clientId: string) {
         })
         .catch(() => null);
 
-      const extra   = (config?.extraSettings as Record<string, unknown>) ?? {};
-      const chat    = (extra.chat as Record<string, unknown>) ?? {};
+      const extra = (config?.extraSettings as Record<string, unknown>) ?? {};
+      const chat = (extra.chat as Record<string, unknown>) ?? {};
       return (chat.themeColor as string) ?? "#dd9946";
     },
     [`widget-theme-${clientId}`],
@@ -83,18 +81,18 @@ export function getMessages(clientId: string) {
   )();
 }
 
-// ─── Reservations ─────────────────────────────────────────────────────────────
-export function getReservations(clientId: string) {
+// ─── Appointments ─────────────────────────────────────────────────────────────
+export function getAppointments(clientId: string) {
   return unstable_cache(
     () =>
-      prisma.reservation
+      prisma.appointment
         .findMany({
           where: { clientId },
           orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         })
         .catch(() => []),
-    [`reservations-${clientId}`],
-    { revalidate: 30, tags: [TAGS.reservations(clientId)] },
+    [`appointments-${clientId}`],
+    { revalidate: 30, tags: [TAGS.appointments(clientId)] },
   )();
 }
 
@@ -102,10 +100,12 @@ export function getReservations(clientId: string) {
 export function getDashboardStats(clientId: string) {
   return unstable_cache(
     async () => {
-      const [totalMessages, unreadMessages, recentMessages, totalReservations] =
+      const [totalMessages, unreadMessages, recentMessages, totalAppointments] =
         await Promise.all([
           prisma.message.count({ where: { clientId } }).catch(() => 0),
-          prisma.message.count({ where: { clientId, isRead: false } }).catch(() => 0),
+          prisma.message
+            .count({ where: { clientId, isRead: false } })
+            .catch(() => 0),
           prisma.message
             .findMany({
               where: { clientId },
@@ -113,10 +113,15 @@ export function getDashboardStats(clientId: string) {
               take: 3,
             })
             .catch(() => []),
-          prisma.reservation.count({ where: { clientId } }).catch(() => 0),
+          prisma.appointment.count({ where: { clientId } }).catch(() => 0),
         ]);
 
-      return { totalMessages, unreadMessages, recentMessages, totalReservations };
+      return {
+        totalMessages,
+        unreadMessages,
+        recentMessages,
+        totalAppointments,
+      };
     },
     [`dashboard-stats-${clientId}`],
     {
@@ -124,7 +129,7 @@ export function getDashboardStats(clientId: string) {
       tags: [
         TAGS.dashboardStats(clientId),
         TAGS.messages(clientId),
-        TAGS.reservations(clientId),
+        TAGS.appointments(clientId),
       ],
     },
   )();

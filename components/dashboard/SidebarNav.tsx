@@ -10,13 +10,17 @@ import {
   Code,
   Zap,
   Users,
+  Briefcase,
+  Clock,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", icon: LayoutDashboard, label: "Pulpit" },
   { href: "/messages", icon: MessageSquare, label: "Wiadomości" },
-  { href: "/reservations", icon: Calendar, label: "Rezerwacje" },
+  { href: "/appointments", icon: Calendar, label: "Rezerwacje" },
   { href: "/clients", icon: Users, label: "Klienci" },
+  { href: "/services", icon: Briefcase, label: "Usługi" },
+  { href: "/working-hours", icon: Clock, label: "Godziny pracy" },
   { href: "/settings", icon: Settings, label: "Konfiguracja" },
   { href: "/integration", icon: Code, label: "Jak używać" },
 ];

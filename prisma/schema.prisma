@@ -12,42 +12,94 @@ datasource db {
 // 1. Model Klienta (Właściciela SaaS, np. Mechanika)
 // ----------------------------------------------------
 model Client {
-  id             String   @id @default(uuid()) // Używamy długich UUID, nie zwykłych liczb (1, 2, 3), żeby nikt nie zgadł innych ID
-  email          String   @unique
-  passwordHash   String   // Hasło do logowania do panelu
-  companyName    String
-  
+  id           String @id @default(uuid()) // Używamy długich UUID, nie zwykłych liczb (1, 2, 3), żeby nikt nie zgadł innych ID
+  email        String @unique
+  passwordHash String // Hasło do logowania do panelu
+  companyName  String
+
   // Status płatności/abonamentu
-  subscription   SubscriptionPlan @default(FREE)
-  isActive       Boolean          @default(true) // Jeśli przestanie płacić, dajesz tu 'false' i widget znika
-  
-  createdAt      DateTime @default(now())
+  subscription SubscriptionPlan @default(FREE)
+  isActive     Boolean          @default(true) // Jeśli przestanie płacić, dajesz tu 'false' i widget znika
+
+  createdAt DateTime @default(now())
 
   // Relacje
-  widgetConfig   WidgetConfig?
-  messages       Message[]
-  reservations   Reservation[]
+  widgetConfig WidgetConfig?
+  messages     Message[]
+  appointments Appointment[]
+  service      Service[]
+  workingHours WorkingHours[]
+  blockedTime  BlockedTime[]
 }
 
 // ----------------------------------------------------
 // 4. Rezerwacje (Nowy panel wizyt)
 // ----------------------------------------------------
-model Reservation {
-  id          String   @id @default(uuid())
-  clientId    String   
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+model Service {
+  id       String @id @default(cuid())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  senderName  String
-  senderPhone String
-  service     String
-  date        String   // Przechowujemy jako string dla uproszczenia frontu lub DateTime
-  time        String
-  price       String?  
-  status      ReservationStatus @default(PENDING)
-  createdAt   DateTime @default(now())
+  name     String // np. "Wymiana oleju"
+  duration Int // Czas trwania w minutach, kluczowe dla kalendarza! (np. 45)
+  price    String? // Opcjonalne pole z ceną
+  isActive Boolean @default(true)
+
+  appointments Appointment[]
 }
 
-enum ReservationStatus {
+model WorkingHours {
+  id       String @id @default(cuid())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  dayOfWeek Int // 0 = Niedziela, 1 = Poniedziałek, ..., 6 = Sobota
+  startTime String // np. "08:00"
+  endTime   String // np. "16:00"
+  isActive  Boolean @default(true)
+
+  @@unique([clientId, dayOfWeek])
+}
+
+model BlockedTime {
+  id       String @id @default(cuid())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  date   DateTime // Zapiszemy tu datę wybraną z kalendarza
+  allDay Boolean  @default(true)
+
+  // Te pola mogą być puste (nullable), jeśli allDay jest true
+  startTime String? // np. "12:00"
+  endTime   String? // np. "14:00"
+
+  createdAt DateTime @default(now())
+
+  // Dodajemy index, bo podczas ładowania okienka czatu będziemy 
+  // bardzo często przeszukiwać tę tabelę po dacie, by zablokować kalendarz
+  @@index([clientId, date])
+}
+
+model Appointment {
+  id       String @id @default(cuid())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  customerName  String
+  customerPhone String
+
+  date      DateTime // Wybrany dzień
+  startTime String // np. "14:30"
+  endTime   String // np. "15:15" (wyliczane z duration w Service)
+
+  status    AppointmentStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+}
+
+enum AppointmentStatus {
   PENDING
   ACCEPTED
   CANCELLED
@@ -57,36 +109,36 @@ enum ReservationStatus {
 // 5. Konfiguracja Widżetu (Wygląd i Bezpieczeństwo)
 // ----------------------------------------------------
 model WidgetConfig {
-  id              String   @id @default(uuid())
-  clientId        String   @unique
-  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  
-  allowedDomains  String[] @default([])   
-  
-  extraSettings   Json?
+  id       String @id @default(uuid())
+  clientId String @unique
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  allowedDomains String[] @default([])
+
+  extraSettings Json?
 }
 
 // ----------------------------------------------------
 // 3. Wiadomości (Dane wysłane przez użytkowników widżetu)
 // ----------------------------------------------------
 model Message {
-  id          String   @id @default(uuid())
-  clientId    String   
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   // Kto napisał wiadomość na stronie klienta
   senderName  String
   senderEmail String
-  content     String   @db.Text // @db.Text pozwala na bardzo długie wiadomości
-  
-  isRead      Boolean  @default(false) // Czy mechanik odczytał to w swoim panelu
-  createdAt   DateTime @default(now())
+  content     String @db.Text // @db.Text pozwala na bardzo długie wiadomości
+
+  isRead    Boolean  @default(false) // Czy mechanik odczytał to w swoim panelu
+  createdAt DateTime @default(now())
 }
 
 // Enum do abonamentów
 enum SubscriptionPlan {
   FREE
-  BASIC
-  PRO
+  GROW
+  ULTRA
   ENTERPRISE
 }
