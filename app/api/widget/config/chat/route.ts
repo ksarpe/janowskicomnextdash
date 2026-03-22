@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { DEFAULT_SETTINGS } from "@/lib/defaultSettings";
-
-export type ChatConfig = {
-  themeColor: string;
-  customSuccessMessage: string;
-  position: string;
-  requirePhone: boolean;
-};
+import { DEFAULT_SETTINGS, ChatWidgetConfig } from "@/lib/defaultSettings";
 
 export async function GET(request: Request) {
   try {
@@ -27,9 +20,10 @@ export async function GET(request: Request) {
     });
 
     const extraSettings =
-      (config?.extraSettings as Record<string, ChatConfig>) || {};
+      (config?.extraSettings as unknown as Record<string, ChatWidgetConfig>) ||
+      {};
 
-    const payload: ChatConfig = {
+    const payload: ChatWidgetConfig = {
       ...DEFAULT_SETTINGS.chat,
       ...(extraSettings.chat || {}),
     };
@@ -40,7 +34,6 @@ export async function GET(request: Request) {
       "Cache-Control",
       "public, s-maxage=3600, stale-while-revalidate=86400",
     );
-
     response.headers.set("Access-Control-Allow-Origin", "*");
 
     return response;

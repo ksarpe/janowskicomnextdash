@@ -3,16 +3,12 @@
 import { MessageSquare, Send } from "lucide-react";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { ChatWidgetConfig } from "@/lib/defaultSettings";
 
 // Definiujemy typy dla propsów, które dostaniemy z serwera
 interface ChatFormProps {
   clientId?: string;
-  initialConfig: {
-    themeColor: string;
-    customSuccessMessage: string;
-    position: string;
-    requirePhone: boolean;
-  };
+  initialConfig: ChatWidgetConfig;
 }
 
 // Floating label input component
@@ -132,6 +128,9 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
   const [successMessage, setSuccessMessage] = useState(
     initialConfig.customSuccessMessage,
   );
+  const [welcomeMessage, setWelcomeMessage] = useState(
+    initialConfig.welcomeMessage,
+  );
 
   const [formState, setFormState] = useState({
     name: "",
@@ -150,6 +149,11 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "update-theme" && event.data?.color) {
         setThemeColor(event.data.color);
+      } else if (
+        event.data?.type === "update-success-message" &&
+        event.data?.message
+      ) {
+        setSuccessMessage(event.data.message);
       }
     };
     window.addEventListener("message", handleMessage);
@@ -164,6 +168,21 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
     e.preventDefault();
     if (!isFormValid) return;
     setIsSubmitting(true);
+
+    // Tryb demo dla konfiguratora - tylko symulacja
+    if (clientId === "widget-configurator") {
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsSuccess(true);
+        setFormState({ name: "", email: "", message: "" });
+
+        // Po krótkim czasie przywracamy formularz, żeby można było testować dalej
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 4000);
+      }, 600);
+      return;
+    }
 
     try {
       const response = await fetch("/api/widget/chat", {
@@ -198,12 +217,12 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
   };
 
   return (
-    <div className="dark flex flex-col w-full h-screen bg-chat-bg text-chat-text font-sans">
+    <div className="flex flex-col w-full h-screen bg-chat-bg text-chat-text font-sans">
       {/* Header */}
       <div className="p-5 border-b border-chat-border flex justify-between items-center">
         <h3 className="font-semibold flex items-center gap-2 text-chat-text">
           <MessageSquare className="w-5 h-5" style={{ color: themeColor }} />
-          Napisz do nas
+          {welcomeMessage}
         </h3>
       </div>
 
@@ -222,9 +241,6 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
               <Send className="w-6 h-6 text-white" />
             </div>
             <h4 className="text-xl font-bold mb-2">{successMessage}</h4>
-            <p className="text-chat-text-muted text-sm">
-              Odpiszemy najszybciej jak to możliwe.
-            </p>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -269,7 +285,8 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
                 boxShadow: isFormValid
                   ? `0 4px 14px ${themeColor}60`
                   : undefined,
-                opacity: isSubmitting || !isFormValid ? 0.45 : isHovered ? 0.7 : 1,
+                opacity:
+                  isSubmitting || !isFormValid ? 0.45 : isHovered ? 0.7 : 1,
                 cursor: !isFormValid ? "not-allowed" : "pointer",
                 backgroundColor: !isFormValid
                   ? "var(--chat-text-muted)"

@@ -1,9 +1,9 @@
 // src/app/(dashboard)/ustawienia/page.tsx
-import { prisma } from "@/lib/db";
 import { DEFAULT_SETTINGS, WidgetSettings } from "@/lib/defaultSettings";
 import SettingsForm from "./SettingsForm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { getWidgetConfig } from "@/lib/queries";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -12,13 +12,13 @@ export default async function SettingsPage() {
   }
   const clientId = session.user.id;
 
-  const config = await prisma.widgetConfig.findUnique({
-    where: { clientId: clientId },
-  });
+  // Cached — no repeated DB query when revisiting the settings tab
+  const config = await getWidgetConfig(clientId);
+
 
   if (!config) {
     return (
-      <div className="p-8 text-red-400">
+      <div className="h-full overflow-y-auto p-8 text-red-400">
         Nie znaleziono konfiguracji dla tego klienta. Skonfiguruj bazę.
       </div>
     );
@@ -36,6 +36,7 @@ export default async function SettingsPage() {
   };
 
   return (
+    <div className="h-full overflow-y-auto">
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-text">Ustawienia Widżetu</h1>
@@ -49,6 +50,7 @@ export default async function SettingsPage() {
         initialDomains={config.allowedDomains}
         initialSettings={mergedSettings}
       />
+    </div>
     </div>
   );
 }

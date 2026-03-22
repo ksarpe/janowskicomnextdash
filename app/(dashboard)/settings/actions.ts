@@ -1,17 +1,14 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { TAGS } from "@/lib/queries";
+import { ChatWidgetConfig } from "@/lib/defaultSettings";
 
 export async function updateWidgetConfig(
   clientId: string,
   allowedDomains: string[],
-  chatSettings: {
-    customSuccessMessage: string;
-    themeColor: string;
-    position: string;
-    requirePhone: boolean;
-  },
+  chatSettings: ChatWidgetConfig,
 ) {
   try {
     // Pobieramy obecny config, żeby złączyć stare ustawienia JSON z nowymi
@@ -34,12 +31,15 @@ export async function updateWidgetConfig(
             themeColor: chatSettings.themeColor,
             position: chatSettings.position,
             requirePhone: chatSettings.requirePhone,
+            welcomeMessage: chatSettings.welcomeMessage,
           },
         },
       },
     });
 
-    // Odświeżamy cache strony, by formularz od razu pokazał nowe dane
+    // Invalidate Next.js data cache so subsequent navigations get fresh data
+    // @ts-expect-error Next.js Canary typings mismatch
+    revalidateTag(TAGS.widgetConfig(clientId));
     revalidatePath("/settings");
     revalidatePath(`/api/widget/config/chat?clientId=${clientId}`);
     return { success: true };

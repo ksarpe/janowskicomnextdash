@@ -1,76 +1,70 @@
-// src/app/(dashboard)/wiadomosci/page.tsx
-import { prisma } from "@/lib/db";
-import { MessageSquare, Mail, Clock } from "lucide-react";
+// app/(dashboard)/messages/page.tsx
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Message } from "@prisma/client";
+import { Mail } from "lucide-react";
+import MessageList from "@/components/dashboard/messages/MessageList";
+import MessageDetail from "@/components/dashboard/messages/MessageDetail";
+import { getMessages } from "@/lib/queries";
 
-export default async function MessagesPage() {
+export default async function MessagesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ selected?: string }>;
+}) {
   const session = await auth();
-  if (!session || !session.user || !session.user.id) {
-    redirect("/login");
-  }
+  if (!session?.user?.id) redirect("/login");
   const clientId = session.user.id;
 
-  const messages = await prisma.message.findMany({
-    where: { clientId },
-    orderBy: { createdAt: "desc" },
-  });
+  const params = await searchParams;
+  const selectedId = params.selected ?? null;
+
+  // Cached — same request-deduplication as in dashboard stats
+  const messages = await getMessages(clientId);
+  const unreadCount = messages.filter((m) => !m.isRead).length;
+
+
+  // Auto-select first unread message if none selected
+  const autoSelected = selectedId
+    ? messages.find((m) => m.id === selectedId) ?? null
+    : messages.find((m) => !m.isRead) ?? messages[0] ?? null;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-text mb-8">Skrzynka odbiorcza</h1>
+    <div className="flex h-full overflow-hidden">
+      {/* Left panel — message list */}
+      <MessageList
+        messages={messages}
+        selectedId={autoSelected?.id ?? null}
+        unreadCount={unreadCount}
+      />
 
-      <div className="bg-bg-alt rounded-2xl border border-border overflow-hidden">
-        <div className="p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-text flex items-center gap-2">
-            <MessageSquare className="w-5 h-5" style={{ color: "var(--primary)" }} />
-            Wszystkie konwersacje
-          </h2>
-        </div>
-
-        <div className="divide-y divide-border">
-          {messages.length === 0 ? (
-            <p className="p-8 text-center text-text-muted">
-              Brak wiadomości. Twój widget czeka na klientów!
-            </p>
-          ) : (
-            messages.map((msg: Message) => (
-              <div
-                key={msg.id}
-                className="p-6 transition-colors"
-                style={{
-                  backgroundColor: !msg.isRead ? "var(--primary)08" : undefined,
-                }}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-3">
-                    {!msg.isRead && (
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: "var(--primary)" }}
-                      />
-                    )}
-                    <span className="font-semibold text-text">{msg.senderName}</span>
-                    <span className="flex items-center gap-1 text-sm text-text-muted">
-                      <Mail className="w-3 h-3" /> {msg.senderEmail}
-                    </span>
-                  </div>
-                  <span className="flex items-center gap-1 text-xs text-text-subtle font-medium">
-                    <Clock className="w-3 h-3" />
-                    {new Date(msg.createdAt).toLocaleDateString("pl-PL", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-                <p className="text-text-muted mt-3 whitespace-pre-wrap text-sm leading-relaxed">
-                  {msg.content}
-                </p>
-              </div>
-            ))
-          )}
-        </div>
+      {/* Right panel — message detail */}
+      <div
+        className="flex-1 flex flex-col overflow-hidden"
+        style={{ backgroundColor: "var(--dash-card)" }}
+      >
+        {autoSelected ? (
+          <MessageDetail message={autoSelected} />
+        ) : (
+          /* Empty state */
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 p-12">
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center"
+              style={{ backgroundColor: "var(--primary)14" }}
+            >
+              <Mail className="w-7 h-7" style={{ color: "var(--primary)" }} />
+            </div>
+            <div className="text-center">
+              <p className="text-base font-bold text-text mb-1">
+                {messages.length === 0 ? "Brak wiadomości" : "Wybierz wiadomość"}
+              </p>
+              <p className="text-sm text-text-muted max-w-xs">
+                {messages.length === 0
+                  ? "Gdy ktoś wyśle wiadomość przez Twój widget, zobaczysz ją tutaj."
+                  : "Kliknij wiadomość po lewej, aby ją przeczytać."}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,49 +1,68 @@
 @import "tailwindcss";
 
 /* =========================================
-   1. ZMIENNE GLOBALNE (CIEMNY TRYB - DOMYŚLNY)
+   1. ZMIENNE GLOBALNE (JASNY TRYB Z PORTFOLIO)
    ========================================= */
 :root {
   --primary: #d19652;
-  --primary-hover: #bc7f3a;
-  --accent: hsl(125, 52%, 62%);
+  --primary-hover: #a77036;
+  --primary-dark: #a77036;
+  --accent: #0a2540;
 
-  --bg: #09090b;
-  --bg-alt: #18181b;
-  --bg-surface: #1f1f23;
-  --border: #27272a;
-  --border-soft: #3f3f46;
+  --bg: #ffffff;
+  --bg-alt: #fafafa;
+  --bg-surface: #ffffff;
+  --border: #f1f5f9;
+  --border-soft: #f8fafc;
 
-  --text: #fafafa;
-  --text-muted: #a1a1aa;
-  --text-subtle: #52525b;
+  --text: #0a2540;
+  --text-muted: #425466;
+  --text-subtle: #64748b;
 
-  /* --- WIDŻET: CHAT (DARK) --- */
-  --chat-bg: #18181b;
-  --chat-surface: #1f1f23;
-  --chat-text: #fafafa;
-  --chat-text-muted: #a1a1aa;
-  --chat-border: #27272a;
-  --chat-accent: #d19652;
+  /* --- DASHBOARD SHELL --- */
+  --dash-bg: #f7f3ef;
+  --dash-sidebar: #fdfaf7;
+  --dash-card: #ffffff;
+  --dash-border: #ede8e3;
 
-  /* --- WIDŻET: BOOKING (DARK) --- */
-  --booking-bg: #18181b;
-  --booking-surface: #1f1f23;
-  --booking-text: #fafafa;
-  --booking-text-muted: #a1a1aa;
-  --booking-border: #27272a;
-  --booking-accent: #d19652;
+  /* --- WIDŻET: CHAT --- */
+  --chat-bg: var(--bg);
+  --chat-surface: var(--bg-surface);
+  --chat-text: var(--text);
+  --chat-text-muted: var(--text-muted);
+  --chat-border: var(--border);
+  --chat-accent: var(--primary);
+
+  /* --- WIDŻET: BOOKING --- */
+  --booking-bg: var(--bg);
+  --booking-surface: var(--bg-surface);
+  --booking-text: var(--text);
+  --booking-text-muted: var(--text-muted);
+  --booking-border: var(--border);
+  --booking-accent: var(--primary);
 }
 
-/* Klasa .dark dla widżetów osadzonych w iframe */
+/* =========================================
+   1b. ZMIENNE GLOBALNE (CIEMNY TRYB)
+   ========================================= */
 .dark {
-  --chat-bg: #18181b;
-  --chat-surface: #1f1f23;
-  --chat-text: #fafafa;
-  --chat-text-muted: #a1a1aa;
-  --chat-border: #27272a;
-  --chat-accent: #d19652;
+  --bg: #0a0a0a;
+  --bg-alt: #121212;
+  --bg-surface: #1a1a1a;
+  --border: #2a2a2a;
+  --border-soft: #333333;
+
+  --text: #ffffff;
+  --text-muted: #a1a1aa;
+  --text-subtle: #71717a;
+
+  /* --- DASHBOARD SHELL --- */
+  --dash-bg: #000000;
+  --dash-sidebar: #0f0f0f;
+  --dash-card: #141414;
+  --dash-border: #1f1f1f;
 }
+
 
 /* =========================================
    2. REJESTRACJA W TAILWIND (v4)
@@ -51,6 +70,7 @@
 @theme inline {
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-dark: var(--primary-dark);
   --color-accent: var(--accent);
 
   --color-bg: var(--bg);
@@ -62,6 +82,12 @@
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
   --color-text-subtle: var(--text-subtle);
+
+  /* Dashboard */
+  --color-dash-bg: var(--dash-bg);
+  --color-dash-sidebar: var(--dash-sidebar);
+  --color-dash-card: var(--dash-card);
+  --color-dash-border: var(--dash-border);
 
   /* Kolory chatu */
   --color-chat-bg: var(--chat-bg);

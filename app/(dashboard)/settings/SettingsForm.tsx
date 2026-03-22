@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { updateWidgetConfig } from "./actions";
-import { Save, Globe, Palette, MessageSquare, Calendar, Box } from "lucide-react";
-import { WidgetSettings } from "@/lib/defaultSettings";
+import {
+  Save,
+  Globe,
+  Palette,
+  MessageSquare,
+  Calendar,
+  Box,
+} from "lucide-react";
+import { WidgetSettings, WidgetPosition } from "@/lib/defaultSettings";
 
 interface SettingsFormProps {
   clientId: string;
@@ -17,10 +24,19 @@ export default function SettingsForm({
   initialSettings,
 }: SettingsFormProps) {
   const [domains, setDomains] = useState(initialDomains.join(", "));
-  const [chatMessage, setChatMessage] = useState(initialSettings.chat.customSuccessMessage);
+  const [chatMessage, setChatMessage] = useState(
+    initialSettings.chat.customSuccessMessage,
+  );
   const [themeColor, setThemeColor] = useState(initialSettings.chat.themeColor);
-  const [position, setPosition] = useState(initialSettings.chat.position);
-  const [requirePhone, setRequirePhone] = useState(initialSettings.chat.requirePhone);
+  const [position, setPosition] = useState<WidgetPosition>(
+    initialSettings.chat.position,
+  );
+  const [requirePhone, setRequirePhone] = useState(
+    initialSettings.chat.requirePhone,
+  );
+  const [welcomeMessage, setWelcomeMessage] = useState(
+    initialSettings.chat.welcomeMessage,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"chat" | "booking" | "3d">("chat");
 
@@ -38,6 +54,7 @@ export default function SettingsForm({
       themeColor: themeColor,
       position: position,
       requirePhone: requirePhone,
+      welcomeMessage: welcomeMessage,
     });
 
     setIsSaving(false);
@@ -67,7 +84,8 @@ export default function SettingsForm({
             Dozwolone domeny (oddziel przecinkiem)
           </label>
           <p className="text-xs text-text-subtle mb-3">
-            Tylko na tych stronach Twoje widżety będą działać ze względów bezpieczeństwa.
+            Tylko na tych stronach Twoje widżety będą działać ze względów
+            bezpieczeństwa.
           </p>
           <input
             type="text"
@@ -90,9 +108,12 @@ export default function SettingsForm({
             onClick={() => setActiveTab("chat")}
             className="flex-1 py-4 px-6 text-sm font-medium flex items-center justify-center gap-2 border-b-2 transition-colors"
             style={{
-              borderColor: activeTab === "chat" ? "var(--primary)" : "transparent",
-              color: activeTab === "chat" ? "var(--primary)" : "var(--text-muted)",
-              backgroundColor: activeTab === "chat" ? "var(--primary)0a" : "transparent",
+              borderColor:
+                activeTab === "chat" ? "var(--primary)" : "transparent",
+              color:
+                activeTab === "chat" ? "var(--primary)" : "var(--text-muted)",
+              backgroundColor:
+                activeTab === "chat" ? "var(--primary)0a" : "transparent",
             }}
           >
             <MessageSquare className="w-4 h-4" />
@@ -151,12 +172,16 @@ export default function SettingsForm({
                     <label className="block text-sm font-medium text-text-muted mb-2">
                       Pozycja widżetu
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={position}
-                      onChange={(e) => setPosition(e.target.value)}
-                      className="px-3 py-2 border border-border bg-bg rounded-lg text-sm font-mono w-40 text-text focus:outline-none"
-                    />
+                      onChange={(e) =>
+                        setPosition(e.target.value as WidgetPosition)
+                      }
+                      className="px-3 py-2 border border-border bg-bg rounded-lg text-sm w-48 text-text focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="bottom-right">Prawy dół (Standard)</option>
+                      <option value="bottom-left">Lewy dół</option>
+                    </select>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -167,7 +192,10 @@ export default function SettingsForm({
                       onChange={(e) => setRequirePhone(e.target.checked)}
                       className="w-4 h-4 rounded accent-primary"
                     />
-                    <label htmlFor="requirePhone" className="text-sm font-medium text-text-muted">
+                    <label
+                      htmlFor="requirePhone"
+                      className="text-sm font-medium text-text-muted"
+                    >
                       Wymagaj numeru telefonu
                     </label>
                   </div>
@@ -183,7 +211,17 @@ export default function SettingsForm({
                   Ustawienia wiadomości
                 </h3>
 
-                <div>
+                <div className="space-y-5">
+                  <label className="block text-sm font-medium text-text-muted mb-2">
+                    Wiadomość powitalna
+                  </label>
+                  <input
+                    type="text"
+                    value={welcomeMessage}
+                    onChange={(e) => setWelcomeMessage(e.target.value)}
+                    className={inputClass}
+                    placeholder="np. Cześć! Jak mogę Ci pomóc?"
+                  />
                   <label className="block text-sm font-medium text-text-muted mb-2">
                     Wiadomość po pomyślnym wysłaniu zapytania
                   </label>

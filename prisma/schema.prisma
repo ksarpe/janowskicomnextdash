@@ -26,10 +26,35 @@ model Client {
   // Relacje
   widgetConfig   WidgetConfig?
   messages       Message[]
+  reservations   Reservation[]
 }
 
 // ----------------------------------------------------
-// 2. Konfiguracja Widżetu (Wygląd i Bezpieczeństwo)
+// 4. Rezerwacje (Nowy panel wizyt)
+// ----------------------------------------------------
+model Reservation {
+  id          String   @id @default(uuid())
+  clientId    String   
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  senderName  String
+  senderPhone String
+  service     String
+  date        String   // Przechowujemy jako string dla uproszczenia frontu lub DateTime
+  time        String
+  price       String?  
+  status      ReservationStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+}
+
+enum ReservationStatus {
+  PENDING
+  ACCEPTED
+  CANCELLED
+}
+
+// ----------------------------------------------------
+// 5. Konfiguracja Widżetu (Wygląd i Bezpieczeństwo)
 // ----------------------------------------------------
 model WidgetConfig {
   id              String   @id @default(uuid())
