@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { DEFAULT_SETTINGS } from "@/lib/defaultSettings";
-import ChatForm from "./ChatForm"; 
+import ChatForm from "./ChatForm";
 
 export default async function EmbeddedChatWidget({
   searchParams,
@@ -15,6 +15,7 @@ export default async function EmbeddedChatWidget({
     customSuccessMessage: DEFAULT_SETTINGS.chat.customSuccessMessage,
     position: DEFAULT_SETTINGS.chat.position,
     requirePhone: DEFAULT_SETTINGS.chat.requirePhone,
+    welcomeMessage: DEFAULT_SETTINGS.chat.welcomeMessage,
   };
 
   // ROZPAKOWUJEMY DANE Z URL (Zero bazy danych!)
@@ -27,9 +28,16 @@ export default async function EmbeddedChatWidget({
       // Nadpisujemy domyślne ustawienia tymi z URL
       configPayload = {
         themeColor: parsedConfig.themeColor || configPayload.themeColor,
-        customSuccessMessage: parsedConfig.customSuccessMessage || configPayload.customSuccessMessage,
+        customSuccessMessage:
+          parsedConfig.customSuccessMessage ||
+          configPayload.customSuccessMessage,
         position: parsedConfig.position || configPayload.position,
-        requirePhone: parsedConfig.requirePhone !== undefined ? parsedConfig.requirePhone : configPayload.requirePhone,
+        requirePhone:
+          parsedConfig.requirePhone !== undefined
+            ? parsedConfig.requirePhone
+            : configPayload.requirePhone,
+        welcomeMessage:
+          parsedConfig.welcomeMessage || configPayload.welcomeMessage,
       };
     } catch (error) {
       console.error("Błąd dekodowania paczki z URL, ładuję domyślne:", error);
