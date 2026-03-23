@@ -14,7 +14,7 @@ export function StatCard({
 }) {
   return (
     <div
-      className="rounded-2xl p-4 border flex flex-col gap-3 relative overflow-hidden"
+      className="rounded-sm p-4 border flex flex-col gap-3 relative overflow-hidden"
       style={{
         backgroundColor: "var(--dash-card)",
         borderColor: "var(--dash-border)",
@@ -22,7 +22,7 @@ export function StatCard({
     >
       <div className="flex justify-between items-center">
         <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center"
+          className="w-9 h-9 rounded-sm flex items-center justify-center"
           style={{ color: "var(--primary)" }}
         >
           <Icon className="w-4.5 h-4.5" />

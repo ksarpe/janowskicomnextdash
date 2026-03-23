@@ -65,19 +65,19 @@ export default function MessageDetail({ message }: Props) {
 
         <div className="flex items-center gap-1.5">
           <button
-            className="p-2 rounded-xl text-text-muted hover:bg-bg-alt transition-colors"
+            className="p-2 rounded-sm text-text-muted hover:bg-bg-alt transition-colors"
             title="Archiwizuj"
           >
             <Archive className="w-4 h-4" />
           </button>
           <button
-            className="p-2 rounded-xl text-text-muted hover:bg-bg-alt transition-colors"
+            className="p-2 rounded-sm text-text-muted hover:bg-bg-alt transition-colors"
             title="Wyślij email"
           >
             <Mail className="w-4 h-4" />
           </button>
           <button
-            className="p-2 rounded-xl text-red-400 hover:bg-red-50 transition-colors"
+            className="p-2 rounded-sm text-red-400 hover:bg-red-50 transition-colors"
             title="Usuń"
           >
             <Trash2 className="w-4 h-4" />
@@ -99,7 +99,7 @@ export default function MessageDetail({ message }: Props) {
         </p>
 
         <div
-          className="text-sm text-text leading-relaxed whitespace-pre-wrap p-5 rounded-2xl border"
+          className="text-sm text-text leading-relaxed whitespace-pre-wrap p-5 rounded-sm border"
           style={{
             backgroundColor: "var(--dash-bg)",
             borderColor: "var(--dash-border)",
@@ -112,7 +112,9 @@ export default function MessageDetail({ message }: Props) {
           <span
             className="text-[11px] font-bold px-3 py-1 rounded-full"
             style={{
-              backgroundColor: message.isRead ? "#22c55e18" : "var(--primary)1a",
+              backgroundColor: message.isRead
+                ? "#22c55e18"
+                : "var(--primary)1a",
               color: message.isRead ? "#22c55e" : "var(--primary)",
             }}
           >
@@ -136,12 +138,12 @@ export default function MessageDetail({ message }: Props) {
         style={{ borderColor: "var(--dash-border)" }}
       >
         {sent && (
-          <div className="mb-3 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-700 font-medium">
+          <div className="mb-3 px-4 py-2.5 rounded-sm bg-emerald-50 border border-emerald-200 text-sm text-emerald-700 font-medium">
             ✓ Odpowiedź wysłana!
           </div>
         )}
         <div
-          className="rounded-2xl border"
+          className="rounded-sm border"
           style={{ borderColor: "var(--dash-border)" }}
         >
           <textarea
@@ -157,17 +159,17 @@ export default function MessageDetail({ message }: Props) {
             style={{ borderColor: "var(--dash-border)" }}
           >
             <div className="flex items-center gap-1">
-              <button className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg-alt transition-colors">
+              <button className="p-1.5 rounded-sm text-text-muted hover:text-text hover:bg-bg-alt transition-colors">
                 <Paperclip className="w-4 h-4" />
               </button>
-              <button className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg-alt transition-colors">
+              <button className="p-1.5 rounded-sm text-text-muted hover:text-text hover:bg-bg-alt transition-colors">
                 <Smile className="w-4 h-4" />
               </button>
             </div>
             <button
               onClick={handleSendReply}
               disabled={!reply.trim()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold transition-all disabled:opacity-40"
+              className="flex items-center gap-2 px-4 py-2 rounded-sm text-white text-xs font-bold transition-all disabled:opacity-40"
               style={{ backgroundColor: "var(--primary)" }}
             >
               Wyślij <Send className="w-3.5 h-3.5" />

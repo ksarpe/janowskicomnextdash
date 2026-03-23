@@ -62,14 +62,14 @@ function StatCard({
 }) {
   return (
     <div
-      className="rounded-2xl border p-5 relative overflow-hidden"
+      className="rounded-sm border p-5 relative overflow-hidden"
       style={{
         backgroundColor: "var(--dash-card)",
         borderColor: "var(--dash-border)",
       }}
     >
       <div
-        className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
+        className="w-9 h-9 rounded-sm flex items-center justify-center mb-3"
         style={{ backgroundColor: "var(--primary)14", color: "var(--primary)" }}
       >
         <Icon className="w-4 h-4" />
@@ -108,7 +108,7 @@ function ClientRow({ client }: { client: ClientProfile }) {
       <td className="py-4 px-5">
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
+            className="w-9 h-9 rounded-sm flex items-center justify-center text-white text-xs font-black shrink-0"
             style={{ backgroundColor: "var(--primary)" }}
           >
             {getInitials(client.name)}
@@ -397,7 +397,7 @@ export default async function ClientsPage() {
 
         {/* Table */}
         <div
-          className="rounded-2xl border overflow-hidden"
+          className="rounded-sm border overflow-hidden"
           style={{
             backgroundColor: "var(--dash-card)",
             borderColor: "var(--dash-border)",
@@ -417,7 +417,7 @@ export default async function ClientsPage() {
           {clientList.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                className="w-14 h-14 rounded-sm flex items-center justify-center"
                 style={{ backgroundColor: "var(--primary)10" }}
               >
                 <Users

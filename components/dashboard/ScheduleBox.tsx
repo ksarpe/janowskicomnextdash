@@ -106,7 +106,7 @@ export async function ScheduleBox() {
   return (
     <div className="flex flex-col gap-5 h-full min-h-[300px]">
       <div
-        className="rounded-2xl border flex-1 flex flex-col overflow-hidden"
+        className="rounded-sm border flex-1 flex flex-col overflow-hidden"
         style={{
           backgroundColor: "var(--dash-card)",
           borderColor: "var(--dash-border)",
@@ -122,7 +122,7 @@ export async function ScheduleBox() {
           </h3>
           <Link
             href="/appointments"
-            className="text-[10px] font-bold px-3 py-1.5 rounded-lg border transition-colors hover:opacity-80 uppercase tracking-wider text-text-muted"
+            className="text-[10px] font-bold px-3 py-1.5 rounded-sm border transition-colors hover:opacity-80 uppercase tracking-wider text-text-muted"
             style={{
               borderColor: "var(--dash-border)",
               backgroundColor: "var(--bg-alt)",
@@ -136,7 +136,7 @@ export async function ScheduleBox() {
           {!isWorkDay ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center opacity-80 min-h-[180px]">
               <div
-                className="w-12 h-12 mb-3 rounded-2xl flex items-center justify-center"
+                className="w-12 h-12 mb-3 rounded-sm flex items-center justify-center"
                 style={{
                   backgroundColor: "var(--bg-alt)",
                   color: "var(--text-muted)",
@@ -153,7 +153,7 @@ export async function ScheduleBox() {
             <div className="flex flex-col gap-6">
               {/* Następna wizyta */}
               <div
-                className="rounded-xl p-4 border"
+                className="rounded-sm p-4 border"
                 style={{
                   backgroundColor: "var(--bg-alt)",
                   borderColor: "var(--dash-border)",
@@ -171,7 +171,7 @@ export async function ScheduleBox() {
               {/* Statystyki: Wizyty, Zajęty, Wolny czas */}
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div
-                  className="p-3 rounded-xl border flex flex-col items-center justify-center"
+                  className="p-3 rounded-sm border flex flex-col items-center justify-center"
                   style={{
                     backgroundColor: "var(--dash-bg)",
                     borderColor: "var(--dash-border)",
@@ -185,7 +185,7 @@ export async function ScheduleBox() {
                   </span>
                 </div>
                 <div
-                  className="p-3 rounded-xl border flex flex-col items-center justify-center"
+                  className="p-3 rounded-sm border flex flex-col items-center justify-center"
                   style={{
                     backgroundColor: "var(--dash-bg)",
                     borderColor: "var(--dash-border)",
@@ -199,7 +199,7 @@ export async function ScheduleBox() {
                   </span>
                 </div>
                 <div
-                  className="p-3 rounded-xl border flex flex-col items-center justify-center"
+                  className="p-3 rounded-sm border flex flex-col items-center justify-center"
                   style={{
                     backgroundColor: "var(--dash-bg)",
                     borderColor: "var(--dash-border)",

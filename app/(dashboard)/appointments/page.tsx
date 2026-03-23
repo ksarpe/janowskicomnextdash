@@ -1,7 +1,6 @@
 // app/(dashboard)/appointments/page.tsx
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Appointment } from "@prisma/client";
 import { getAppointments } from "@/lib/queries";
 import { todayStr } from "@/utils/helpers";
 import AppointmentList from "@/components/dashboard/reservations/AppointmentList";
@@ -12,7 +11,7 @@ export default async function AppointmentsPage() {
   const clientId = session.user.id;
 
   // Cached — no new DB query if data was fetched within the last 30 s
-  const appointments: Appointment[] = await getAppointments(clientId);
+  const appointments = await getAppointments(clientId);
   const pendingCount = appointments.filter(
     (r) => r.status === "PENDING",
   ).length;
@@ -33,7 +32,7 @@ export default async function AppointmentsPage() {
           </div>
           {pendingCount > 0 && (
             <div
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold"
+              className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-bold"
               style={{
                 backgroundColor: "#f59e0b14",
                 color: "#f59e0b",

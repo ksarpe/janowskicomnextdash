@@ -45,11 +45,13 @@ export function MiniCalendar({
 
     if (isCurrentMonth) {
       const count = dayHours[day]?.length || 0;
-      if (count === 1)
-        bgColor = "#22c55e"; // green
-      else if (count === 2)
+      if (count === 0)
+        bgColor = "#DCF9E7"; // green
+      else if (count > 0 && count < 3)
         bgColor = "#eab308"; // yellow
-      else if (count >= 3) bgColor = "#ef4444"; // red
+      else if (count < 8)
+        bgColor = "#f97316"; // orange
+      else if (count >= 8) bgColor = "#ef4444"; // red
       if (count > 0) isBusy = true;
     } else {
       opacity = 0.3;
@@ -86,7 +88,7 @@ export function MiniCalendar({
 
   return (
     <div
-      className="relative rounded-2xl border flex flex-col h-full overflow-hidden"
+      className="relative rounded-sm border flex flex-col h-full overflow-hidden"
       style={{
         backgroundColor: "var(--dash-card)",
         borderColor: "var(--dash-border)",
@@ -120,15 +122,15 @@ export function MiniCalendar({
           <div className="flex gap-1.5">
             <div
               className="w-3.5 h-3.5 rounded-sm shadow-sm"
-              style={{ backgroundColor: "var(--bg-alt)" }}
-            />
-            <div
-              className="w-3.5 h-3.5 rounded-sm shadow-sm"
-              style={{ backgroundColor: "#22c55e" }}
+              style={{ backgroundColor: "#DCF9E7" }}
             />
             <div
               className="w-3.5 h-3.5 rounded-sm shadow-sm"
               style={{ backgroundColor: "#eab308" }}
+            />
+            <div
+              className="w-3.5 h-3.5 rounded-sm shadow-sm"
+              style={{ backgroundColor: "#f97316" }}
             />
             <div
               className="w-3.5 h-3.5 rounded-sm shadow-sm"
@@ -142,7 +144,7 @@ export function MiniCalendar({
       {popoverDay !== null && (
         <div className="absolute inset-0 z-20 flex items-center justify-center p-4 bg-black/40 backdrop-blur-[2px]">
           <div
-            className="w-full rounded-2xl border shadow-2xl p-4 flex flex-col animate-in fade-in zoom-in-95 duration-200"
+            className="w-full rounded-sm border shadow-2xl p-4 flex flex-col animate-in fade-in zoom-in-95 duration-200"
             style={{
               backgroundColor: "var(--dash-card)",
               borderColor: "var(--dash-border)",
@@ -157,7 +159,7 @@ export function MiniCalendar({
                   e.stopPropagation();
                   setPopoverDay(null);
                 }}
-                className="p-1 hover:bg-bg-alt rounded-lg text-text-muted transition-colors"
+                className="p-1 hover:bg-bg-alt rounded-sm text-text-muted transition-colors"
                 title="Zamknij popup"
               >
                 <X className="w-4 h-4" />
@@ -172,7 +174,7 @@ export function MiniCalendar({
                 dayHours[popoverDay].map((t, idx) => (
                   <div
                     key={idx}
-                    className="px-2 py-1 flex items-center gap-1.5 bg-[var(--primary)18] border rounded-lg text-xs font-bold"
+                    className="px-2 py-1 flex items-center gap-1.5 bg-[var(--primary)18] border rounded-sm text-xs font-bold"
                     style={{
                       borderColor: "var(--primary)",
                       color: "var(--primary)",
@@ -193,7 +195,7 @@ export function MiniCalendar({
                 onSeeAll(popoverDay);
                 setPopoverDay(null);
               }}
-              className="w-full py-2.5 font-bold text-white text-xs rounded-xl transition-opacity hover:opacity-90"
+              className="w-full py-2.5 font-bold text-white text-xs rounded-sm transition-opacity hover:opacity-90"
               style={{ backgroundColor: "var(--primary)" }}
             >
               Zobacz wizyty

@@ -1,4 +1,4 @@
-import { Appointment } from "@prisma/client";
+import { AppointmentWithService } from "./AppointmentList";
 import { getInitials, formatDate } from "@/utils/helpers";
 import { Clock, Phone, MoreVertical, Check, X } from "lucide-react";
 import { useTransition } from "react";
@@ -34,7 +34,7 @@ function ActionButton({
     <button
       onClick={handleClick}
       disabled={isPending}
-      className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+      className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold transition-all disabled:opacity-50"
       style={
         isAccept
           ? { backgroundColor: "#22c55e18", color: "#22c55e" }
@@ -53,7 +53,7 @@ function ActionButton({
 }
 
 // ── AppointmentRow ─────────────────────────────────────────────────────────────
-export function AppointmentRow({ res }: { res: Appointment }) {
+export function AppointmentRow({ res }: { res: AppointmentWithService }) {
   const status = res.status as Status;
   const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.PENDING;
   const isPending = status === "PENDING";
@@ -67,7 +67,7 @@ export function AppointmentRow({ res }: { res: Appointment }) {
       <td className="py-4 px-5">
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
+            className="w-9 h-9 rounded-sm flex items-center justify-center text-white text-xs font-black shrink-0"
             style={{ backgroundColor: "var(--primary)" }}
           >
             {getInitials(res.customerName)}
@@ -78,6 +78,9 @@ export function AppointmentRow({ res }: { res: Appointment }) {
             </p>
           </div>
         </div>
+        <p className="text-xs text-text-muted mt-1.5 line-clamp-1">
+          {res.service.name}
+        </p>
       </td>
 
       {/* Date & Time */}
@@ -103,7 +106,9 @@ export function AppointmentRow({ res }: { res: Appointment }) {
 
       {/* Price */}
       <td className="py-4 px-4">
-        <p className="text-sm font-black text-text">{res.price ?? "—"}</p>
+        <p className="text-sm font-black text-text">
+          {res.service.price ?? "—"}
+        </p>
       </td>
 
       {/* Status */}
@@ -128,7 +133,7 @@ export function AppointmentRow({ res }: { res: Appointment }) {
             <ActionButton appointmentId={res.id} type="reject" />
           </div>
         ) : (
-          <button className="p-1.5 rounded-lg text-text-subtle hover:text-text hover:bg-bg-alt transition-colors opacity-0 group-hover:opacity-100">
+          <button className="p-1.5 rounded-sm text-text-subtle hover:text-text hover:bg-bg-alt transition-colors opacity-0 group-hover:opacity-100">
             <MoreVertical className="w-3.5 h-3.5" />
           </button>
         )}

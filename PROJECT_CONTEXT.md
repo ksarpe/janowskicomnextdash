@@ -67,7 +67,7 @@ Plik `schema.prisma` nie zawiera bloku `datasources`. Korzystamy z Prisma 7, w k
 
 ## 5. Standardy UI / UX i Czysty Kod (Zasady dla AI)
 
-1. **Design System:** Styl minimalistyczny, przypominający interfejsy Stripe, Vercel, Linear. Używamy jasnych teł, białych kart (`bg-dash-card`), delikatnych ramek (`border-dash-border`), zaokrągleń (`rounded-xl` lub `rounded-2xl`) i subtelnych cieni.
+1. **Design System:** Styl minimalistyczny, przypominający interfejsy Stripe, Vercel, Linear. Używamy jasnych teł, białych kart (`bg-dash-card`), delikatnych ramek (`border-dash-border`), zaokrągleń (`rounded-sm` lub `rounded-sm`) i subtelnych cieni.
 2. **Top-Down Design:** Rozwój zaczynamy od zrobienia pięknego i przemyślanego UI z mockowanymi (statycznymi) danymi, a dopiero po akceptacji podpinamy logikę serwerową, bazę danych i stany ładowania.
 3. **Progressive Disclosure:** Długie formularze (np. rezerwacja) rozbijamy na mniejsze, logiczne kroki (np. 1. Wybór usługi -> 2. Wybór terminu -> 3. Formularz kontaktowy). Zawsze dodajemy pasek postępu i możliwość cofnięcia.
 4. **Rozszerzanie obiektów:** Zawsze gdy łączymy ustawienia domyślne z zapisanymi w bazie JSON-ami, używamy Spread Operatora (`...DEFAULT_SETTINGS, ...userSettings`), zamiast pisać logikę sprawdzającą każde pole przy pomocy operatora `||`.

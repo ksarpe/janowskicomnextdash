@@ -27,12 +27,12 @@ export default function LoginForm() {
   };
 
   const inputClass =
-    "w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder-text-subtle focus:outline-none focus:ring-2 focus:border-transparent transition-all sm:text-sm";
+    "w-full px-4 py-2.5 bg-bg border border-border rounded-sm text-text placeholder-text-subtle focus:outline-none focus:ring-2 focus:border-transparent transition-all sm:text-sm";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 w-full">
       {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-400 mb-2">
+        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-sm flex items-start gap-3 text-red-400 mb-2">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <p className="text-sm font-medium leading-relaxed">{error}</p>
         </div>
@@ -56,7 +56,11 @@ export default function LoginForm() {
         <div>
           <label className="block text-sm font-medium text-text-muted mb-1.5 flex justify-between">
             Hasło
-            <a href="#" className="font-normal text-sm" style={{ color: "var(--primary)" }}>
+            <a
+              href="#"
+              className="font-normal text-sm"
+              style={{ color: "var(--primary)" }}
+            >
               Zapomniałeś?
             </a>
           </label>
@@ -73,7 +77,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-xl transition-all disabled:opacity-60 shadow-lg"
+        className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-sm transition-all disabled:opacity-60 shadow-lg"
         style={{
           backgroundColor: "var(--primary)",
           boxShadow: "0 4px 14px var(--primary)50",
@@ -91,7 +95,11 @@ export default function LoginForm() {
 
       <div className="mt-6 text-center text-sm text-text-muted">
         Nie masz konta?{" "}
-        <a href="/register" className="font-medium" style={{ color: "var(--primary)" }}>
+        <a
+          href="/register"
+          className="font-medium"
+          style={{ color: "var(--primary)" }}
+        >
           Zarejestruj się
         </a>
       </div>

@@ -66,9 +66,9 @@ export default function SettingsForm({
   };
 
   const inputClass =
-    "w-full px-4 py-2.5 bg-bg border border-border rounded-lg text-text text-sm focus:outline-none focus:ring-1 transition-all placeholder-text-subtle";
+    "w-full px-4 py-2.5 bg-bg border border-border rounded-sm text-text text-sm focus:outline-none focus:ring-1 transition-all placeholder-text-subtle";
 
-  const sectionClass = "bg-bg-alt p-6 rounded-2xl border border-border";
+  const sectionClass = "bg-bg-alt p-6 rounded-sm border border-border";
 
   return (
     <form onSubmit={handleSave} className="space-y-6">
@@ -100,7 +100,7 @@ export default function SettingsForm({
       {/* Zakładki widżetów */}
       <h2 className="text-xl font-bold text-text pt-2">Ustawienia widgetów</h2>
 
-      <div className="bg-bg-alt rounded-2xl border border-border overflow-hidden">
+      <div className="bg-bg-alt rounded-sm border border-border overflow-hidden">
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button
@@ -157,13 +157,13 @@ export default function SettingsForm({
                         type="color"
                         value={themeColor}
                         onChange={(e) => setThemeColor(e.target.value)}
-                        className="w-11 h-11 rounded-lg cursor-pointer border-0 p-0.5 bg-bg-surface"
+                        className="w-11 h-11 rounded-sm cursor-pointer border-0 p-0.5 bg-bg-surface"
                       />
                       <input
                         type="text"
                         value={themeColor}
                         onChange={(e) => setThemeColor(e.target.value)}
-                        className="px-3 py-2 border border-border bg-bg rounded-lg text-sm font-mono w-32 text-text focus:outline-none"
+                        className="px-3 py-2 border border-border bg-bg rounded-sm text-sm font-mono w-32 text-text focus:outline-none"
                       />
                     </div>
                   </div>
@@ -177,7 +177,7 @@ export default function SettingsForm({
                       onChange={(e) =>
                         setPosition(e.target.value as WidgetPosition)
                       }
-                      className="px-3 py-2 border border-border bg-bg rounded-lg text-sm w-48 text-text focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer"
+                      className="px-3 py-2 border border-border bg-bg rounded-sm text-sm w-48 text-text focus:outline-none focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer"
                     >
                       <option value="bottom-right">Prawy dół (Standard)</option>
                       <option value="bottom-left">Lewy dół</option>
@@ -242,7 +242,7 @@ export default function SettingsForm({
       <button
         type="submit"
         disabled={isSaving}
-        className="flex items-center gap-2 px-6 py-3 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-lg"
+        className="flex items-center gap-2 px-6 py-3 text-white font-semibold rounded-sm transition-all disabled:opacity-50 shadow-lg"
         style={{
           backgroundColor: "var(--primary)",
           boxShadow: "0 4px 14px var(--primary)40",

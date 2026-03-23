@@ -127,7 +127,7 @@ export default function IntegrationForm({ clientId }: IntegrationFormProps) {
               {copied ? "Skopiowano!" : "Kopiuj"}
             </Button>
           </div>
-          <pre className="bg-bg p-6 pt-12 rounded-xl overflow-x-auto text-sm font-mono whitespace-pre-wrap text-text-muted border border-border">
+          <pre className="bg-bg p-6 pt-12 rounded-sm overflow-x-auto text-sm font-mono whitespace-pre-wrap text-text-muted border border-border">
             {codes[activeTab]}
           </pre>
         </div>

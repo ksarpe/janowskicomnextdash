@@ -22,11 +22,10 @@ export default async function MessagesPage({
   const messages = await getMessages(clientId);
   const unreadCount = messages.filter((m) => !m.isRead).length;
 
-
   // Auto-select first unread message if none selected
   const autoSelected = selectedId
-    ? messages.find((m) => m.id === selectedId) ?? null
-    : messages.find((m) => !m.isRead) ?? messages[0] ?? null;
+    ? (messages.find((m) => m.id === selectedId) ?? null)
+    : (messages.find((m) => !m.isRead) ?? messages[0] ?? null);
 
   return (
     <div className="flex h-full overflow-hidden">
@@ -48,14 +47,16 @@ export default async function MessagesPage({
           /* Empty state */
           <div className="flex-1 flex flex-col items-center justify-center gap-4 p-12">
             <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center"
+              className="w-16 h-16 rounded-sm flex items-center justify-center"
               style={{ backgroundColor: "var(--primary)14" }}
             >
               <Mail className="w-7 h-7" style={{ color: "var(--primary)" }} />
             </div>
             <div className="text-center">
               <p className="text-base font-bold text-text mb-1">
-                {messages.length === 0 ? "Brak wiadomości" : "Wybierz wiadomość"}
+                {messages.length === 0
+                  ? "Brak wiadomości"
+                  : "Wybierz wiadomość"}
               </p>
               <p className="text-sm text-text-muted max-w-xs">
                 {messages.length === 0

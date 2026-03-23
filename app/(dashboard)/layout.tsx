@@ -1,9 +1,7 @@
 // app/(dashboard)/layout.tsx
-import { signOut, auth } from "@/auth";
-import { Power } from "lucide-react";
+import { auth } from "@/auth";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { getClientPlan, getWidgetThemeColor } from "@/lib/queries";
-import { Button } from "@/components/ui/Button";
 
 export default async function DashboardLayout({
   children,
@@ -24,33 +22,12 @@ export default async function DashboardLayout({
       ])
     : ["FREE" as const, "#dd9946"];
 
-  // Server action for logout — must live in a server component
-  const logoutForm = (
-    <form
-      action={async () => {
-        "use server";
-        await signOut({ redirectTo: "/login" });
-      }}
-    >
-      <Button
-        type="submit"
-        title="Wyloguj"
-        variant="ghost"
-        className="hover:bg-red-500/20"
-      >
-        <Power className="w-3.5 h-3.5" />
-      </Button>
-    </form>
-  );
-
   return (
     <DashboardShell
       userName={userName}
       userEmail={userEmail}
-      userInitial={userInitial}
       plan={plan}
       themeColor={themeColor}
-      logoutForm={logoutForm}
     >
       {children}
     </DashboardShell>

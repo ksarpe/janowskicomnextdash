@@ -6,7 +6,7 @@ export function ActivityBox({ recentMessages }: { recentMessages: Message[] }) {
   return (
     <div className="flex flex-col gap-5">
       <div
-        className="rounded-2xl border flex-1"
+        className="rounded-sm border flex-1"
         style={{
           backgroundColor: "var(--dash-card)",
           borderColor: "var(--dash-border)",

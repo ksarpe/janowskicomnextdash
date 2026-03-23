@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 export function WidgetBox() {
   return (
     <div
-      className="rounded-2xl border overflow-hidden flex flex-col"
+      className="rounded-sm border overflow-hidden flex flex-col"
       style={{
         backgroundColor: "var(--dash-card)",
         borderColor: "var(--dash-border)",

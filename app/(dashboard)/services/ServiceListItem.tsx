@@ -34,7 +34,7 @@ export function ServiceListItem({
       <div className="flex-1 min-w-[200px]">
         <div className="flex items-center gap-2">
           {/* Piękne renderowanie dynamicznej ikony */}
-          <div className="p-2 bg-primary/10 rounded-lg text-primary">
+          <div className="p-2 bg-primary/10 rounded-sm text-primary">
             <ServiceIcon name={service.iconName} className="w-5 h-5" />
           </div>
           <h4 className="font-bold text-text flex items-center gap-2.5 text-base">

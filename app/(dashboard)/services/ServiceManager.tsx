@@ -174,14 +174,14 @@ export default function ServiceManager({
               isSubmitting={isPending}
               title="Nowa usługa"
               submitText="Dodaj usługę"
-              className="p-5 rounded-2xl border bg-dash-card border-dash-border flex flex-col gap-4 shadow-sm animate-in fade-in slide-in-from-top-4"
+              className="p-5 rounded-sm border bg-dash-card border-dash-border flex flex-col gap-4 shadow-sm animate-in fade-in slide-in-from-top-4"
             />
           )}
 
           {optimisticServices.length === 0 && !isAdding && (
-            <div className="flex flex-col items-center justify-center py-16 gap-4 border border-dashed border-dash-border rounded-2xl bg-(--dash-card)/50">
+            <div className="flex flex-col items-center justify-center py-16 gap-4 border border-dashed border-dash-border rounded-sm bg-(--dash-card)/50">
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                className="w-14 h-14 rounded-sm flex items-center justify-center"
                 style={{ backgroundColor: "var(--primary)10" }}
               >
                 <Banknote
@@ -202,7 +202,7 @@ export default function ServiceManager({
           {optimisticServices.map((service) => (
             <div
               key={service.id}
-              className={`p-4 rounded-2xl border transition-all ${
+              className={`p-4 rounded-sm border transition-all ${
                 service.isActive
                   ? "bg-dash-card"
                   : "bg-dash-bg opacity-70 grayscale-30"

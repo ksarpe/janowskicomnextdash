@@ -42,7 +42,7 @@ function FloatingInput({
         onChange={onChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className="w-full border bg-chat-surface border-chat-border rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none transition-all peer"
+        className="w-full border bg-chat-surface border-chat-border rounded-sm px-3 pt-5 pb-2 text-sm focus:outline-none transition-all peer"
         style={{
           outlineColor: themeColor,
           boxShadow: focused ? `0 0 0 2px ${themeColor}40` : undefined,
@@ -99,7 +99,7 @@ function FloatingTextarea({
         onChange={onChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className="w-full bg-chat-surface border border-chat-border rounded-lg px-3 pt-6 pb-2 text-sm resize-none focus:outline-none transition-all peer"
+        className="w-full bg-chat-surface border border-chat-border rounded-sm px-3 pt-6 pb-2 text-sm resize-none focus:outline-none transition-all peer"
         style={{
           outlineColor: themeColor,
           boxShadow: focused ? `0 0 0 2px ${themeColor}40` : undefined,
@@ -280,7 +280,7 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
               disabled={isSubmitting || !isFormValid}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="w-full mt-2 text-white font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-all"
+              className="w-full mt-2 text-white font-semibold py-2.5 rounded-sm text-sm flex items-center justify-center gap-2 transition-all"
               style={{
                 boxShadow: isFormValid
                   ? `0 4px 14px ${themeColor}60`

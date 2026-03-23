@@ -22,7 +22,7 @@ export function WidgetRow({
       <td className="py-3.5 px-4">
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
+            className="w-8 h-8 rounded-sm flex items-center justify-center"
             style={{
               backgroundColor: "var(--primary)14",
               color: "var(--primary)",

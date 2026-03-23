@@ -17,17 +17,17 @@ export function getInitials(name: string) {
     .slice(0, 2);
 }
 
-export function formatDate(dateStr: string) {
+export function formatDate(dateStr: Date | string) {
   try {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
+    if (isNaN(d.getTime())) return String(dateStr);
     return d.toLocaleDateString("pl-PL", {
       day: "numeric",
       month: "short",
       year: "numeric",
     });
   } catch {
-    return dateStr;
+    return String(dateStr);
   }
 }
 

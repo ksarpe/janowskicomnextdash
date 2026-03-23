@@ -47,26 +47,22 @@ const PLAN_CONFIG = {
 interface Props {
   userName: string;
   userEmail: string;
-  userInitial: string;
   plan: string;
-  themeColor?: string;
-  logoutForm: React.ReactNode;
+  modalOpen: boolean;
+  setModalOpen: (open: boolean) => void;
+  modalTab: "account" | "plan" | "security";
+  setModalTab: (tab: "account" | "plan" | "security") => void;
 }
 
 export default function UserProfilePanel({
   userName,
   userEmail,
-  userInitial,
   plan,
-  logoutForm,
+  modalOpen,
+  setModalOpen,
+  modalTab,
+  setModalTab,
 }: Props) {
-  const [open, setOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalTab, setModalTab] = useState<"account" | "plan" | "security">(
-    "account",
-  );
-  const [isDark, setIsDark] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -80,215 +76,21 @@ export default function UserProfilePanel({
   const planCfg = PLAN_CONFIG[planKey];
   const PlanIcon = planCfg.icon;
 
-  // Initialize theme
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
-  }, []);
-
-  // Close popup on outside click
-  useEffect(() => {
-    function handler(e: MouseEvent) {
-      // Don't close if modal is open
-      if (modalOpen) return;
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open, modalOpen]);
-
   // Close on Escape
   useEffect(() => {
     function handler(e: KeyboardEvent) {
       if (e.key === "Escape") {
         if (modalOpen) {
           setModalOpen(false);
-        } else {
-          setOpen(false);
         }
       }
     }
-    if (open || modalOpen) document.addEventListener("keydown", handler);
+    if (modalOpen) document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [open, modalOpen]);
-
-  function toggleTheme() {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.remove("dark");
-      setIsDark(false);
-    } else {
-      root.classList.add("dark");
-      setIsDark(true);
-    }
-  }
-
-  function openModal(tab: "account" | "plan" | "security") {
-    setModalTab(tab);
-    setModalOpen(true);
-    setOpen(false); // Close the small popup
-  }
+  }, [modalOpen, setModalOpen]);
 
   return (
     <>
-      {/* ── Popup Panel Trigger ───────────────────────────────────────────────── */}
-      <div className="relative" ref={panelRef}>
-        <button
-          onClick={() => setOpen((o) => !o)}
-          className="w-full px-4 py-3.5 flex items-center gap-3 transition-colors rounded-none hover:brightness-95 group"
-          style={{
-            borderTop: "1px solid var(--dash-border)",
-            backgroundColor: open ? "var(--primary)08" : "transparent",
-          }}
-        >
-          <div
-            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-white text-xs font-bold ring-2 ring-offset-1 transition-all"
-            style={{
-              backgroundColor: "var(--primary)",
-            }}
-          >
-            {userInitial}
-          </div>
-          <div className="flex flex-col truncate flex-1 min-w-0 text-left">
-            <span className="text-xs font-semibold text-text truncate">
-              {userName}
-            </span>
-            <span className="text-[10px] text-text-muted truncate flex items-center gap-1">
-              <PlanIcon
-                className="w-2.5 h-2.5 shrink-0"
-                style={{ color: planCfg.color }}
-              />
-              Plan {planCfg.label}
-            </span>
-          </div>
-          <ChevronRight
-            className={`w-3.5 h-3.5 text-text-subtle shrink-0 transition-transform duration-200 ${open ? "rotate-90" : ""}`}
-          />
-        </button>
-
-        {/* Backdrop for Popup */}
-        <div
-          className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] transition-opacity duration-200 ${
-            open && !modalOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-
-        {/* Popup Panel */}
-        <div
-          className={`fixed bottom-4 left-4 z-50 w-[300px] rounded-2xl border shadow-2xl overflow-hidden transition-all duration-300 ${
-            open && !modalOpen
-              ? "opacity-100 translate-y-0 scale-100"
-              : "opacity-0 translate-y-4 scale-95 pointer-events-none"
-          }`}
-          style={{
-            backgroundColor: "var(--dash-card)",
-            borderColor: "var(--dash-border)",
-          }}
-        >
-          {/* Header */}
-          <div
-            className="px-5 py-4 flex items-center justify-between border-b"
-            style={{ borderColor: "var(--dash-border)" }}
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-black"
-                style={{ backgroundColor: "var(--primary)" }}
-              >
-                {userInitial}
-              </div>
-              <div>
-                <p className="text-sm font-bold text-text">{userName}</p>
-                <p className="text-[11px] text-text-muted truncate max-w-[150px]">
-                  {userEmail}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg-alt transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* User Actions */}
-          <div
-            className="p-2 border-b"
-            style={{ borderColor: "var(--dash-border)" }}
-          >
-            <button
-              onClick={() => openModal("account")}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-text hover:text-text hover:bg-bg-alt transition-colors"
-            >
-              <div className="w-6 h-6 rounded-md flex items-center justify-center bg-zinc-500/10 text-zinc-500">
-                <User className="w-3.5 h-3.5" />
-              </div>
-              Informacje o koncie
-            </button>
-            <button
-              onClick={() => openModal("plan")}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-text hover:text-text hover:bg-bg-alt transition-colors"
-            >
-              <div className="w-6 h-6 rounded-md flex items-center justify-center bg-emerald-500/10 text-emerald-500">
-                <CreditCard className="w-3.5 h-3.5" />
-              </div>
-              Zarządzaj subskrypcją
-            </button>
-            <button
-              onClick={() => openModal("security")}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-text hover:text-text hover:bg-bg-alt transition-colors"
-            >
-              <div className="w-6 h-6 rounded-md flex items-center justify-center bg-blue-500/10 text-blue-500">
-                <Lock className="w-3.5 h-3.5" />
-              </div>
-              Zmiana hasła i profil
-            </button>
-          </div>
-
-          {/* Theme switcher */}
-          <div
-            className="px-5 py-4 border-b flex items-center justify-between"
-            style={{ borderColor: "var(--dash-border)" }}
-          >
-            <div className="flex items-center gap-2">
-              {isDark ? (
-                <Moon className="w-4 h-4 text-text-muted" />
-              ) : (
-                <Sun className="w-4 h-4 text-text-muted" />
-              )}
-              <span className="text-xs font-semibold text-text">
-                Tryb {isDark ? "ciemny" : "jasny"}
-              </span>
-            </div>
-            {/* Simple pill switch */}
-            <div
-              role="button"
-              onClick={toggleTheme}
-              className={`w-10 h-6 rounded-full flex items-center transition-all p-1 cursor-pointer ${isDark ? "bg-primary" : "bg-slate-300"}`}
-            >
-              <div
-                className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isDark ? "translate-x-4" : "translate-x-0"}`}
-              />
-            </div>
-          </div>
-
-          {/* Footer: logout */}
-          <div className="px-5 py-3 flex items-center justify-between">
-            <p className="text-[10px] text-text-subtle">
-              Wersja {process.env.APP_VERSION}
-            </p>
-            <div className="flex items-center gap-2">{logoutForm}</div>
-          </div>
-        </div>
-      </div>
-
       {/* ── Central Modal Overlay ─────────────────────────────────────────────── */}
       {mounted &&
         createPortal(
@@ -322,7 +124,7 @@ export default function UserProfilePanel({
                 <div className="flex flex-row md:flex-col gap-1 overflow-x-auto no-scrollbar">
                   <button
                     onClick={() => setModalTab("account")}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs font-semibold transition-all whitespace-nowrap ${
                       modalTab === "account"
                         ? "bg-[var(--primary)18] text-primary"
                         : "text-text-muted hover:bg-bg hover:text-text"
@@ -332,7 +134,7 @@ export default function UserProfilePanel({
                   </button>
                   <button
                     onClick={() => setModalTab("plan")}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs font-semibold transition-all whitespace-nowrap ${
                       modalTab === "plan"
                         ? "bg-[var(--primary)18] text-primary"
                         : "text-text-muted hover:bg-bg hover:text-text"
@@ -342,7 +144,7 @@ export default function UserProfilePanel({
                   </button>
                   <button
                     onClick={() => setModalTab("security")}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs font-semibold transition-all whitespace-nowrap ${
                       modalTab === "security"
                         ? "bg-[var(--primary)18] text-primary"
                         : "text-text-muted hover:bg-bg hover:text-text"
@@ -383,22 +185,14 @@ export default function UserProfilePanel({
                 {modalTab === "account" && (
                   <div className="space-y-6 flex-1">
                     <div className="flex items-center gap-4">
-                      <div
-                        className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-lg"
-                        style={{ backgroundColor: "var(--primary)" }}
-                      >
-                        {userInitial}
-                      </div>
                       <div>
                         <h3 className="font-bold text-text">{userName}</h3>
-                        <p className="text-sm text-text-muted">
-                          {userEmail}
-                        </p>
+                        <p className="text-sm text-text-muted">{userEmail}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mt-8">
-                      <div className="border border-dash-border p-4 rounded-2xl bg-bg-alt">
+                      <div className="border border-dash-border p-4 rounded-sm bg-bg-alt">
                         <p className="text-[10px] text-text-subtle font-bold uppercase tracking-widest mb-1">
                           Rola
                         </p>
@@ -406,7 +200,7 @@ export default function UserProfilePanel({
                           Administrator systemu
                         </p>
                       </div>
-                      <div className="border border-dash-border p-4 rounded-2xl bg-bg-alt">
+                      <div className="border border-dash-border p-4 rounded-sm bg-bg-alt">
                         <p className="text-[10px] text-text-subtle font-bold uppercase tracking-widest mb-1">
                           Data dołączenia
                         </p>
@@ -426,7 +220,7 @@ export default function UserProfilePanel({
                 {modalTab === "plan" && (
                   <div className="space-y-6 flex-1">
                     <div
-                      className="rounded-2xl border p-5 flex items-center justify-between"
+                      className="rounded-sm border p-5 flex items-center justify-between"
                       style={{
                         backgroundColor: planCfg.bg,
                         borderColor: `${planCfg.color}30`,
@@ -434,7 +228,7 @@ export default function UserProfilePanel({
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0"
+                          className="w-12 h-12 rounded-sm flex items-center justify-center text-white shrink-0"
                           style={{ backgroundColor: planCfg.color }}
                         >
                           <PlanIcon className="w-6 h-6" />
@@ -475,7 +269,7 @@ export default function UserProfilePanel({
 
                     <div className="mt-8 pt-6 border-t border-dash-border">
                       <button
-                        className="px-5 py-2.5 rounded-xl font-bold text-white text-sm transition-opacity hover:opacity-90 w-full sm:w-auto"
+                        className="px-5 py-2.5 rounded-sm font-bold text-white text-sm transition-opacity hover:opacity-90 w-full sm:w-auto"
                         style={{ backgroundColor: "var(--primary)" }}
                       >
                         Przejdź na pełną wersję płatną
@@ -495,20 +289,20 @@ export default function UserProfilePanel({
                         Aby zmienić hasło, wyślemy na Twoją skrzynkę link
                         autoryzacyjny.
                       </p>
-                      <button className="px-5 py-2.5 rounded-xl border border-dash-border font-semibold text-sm text-text hover:bg-bg-alt transition-colors">
+                      <button className="px-5 py-2.5 rounded-sm border border-dash-border font-semibold text-sm text-text hover:bg-bg-alt transition-colors">
                         Wyślij link
                       </button>
                     </div>
 
-                    <div className="pt-6 border-t border-dash-border mt-6">
+                    <div className="pt-6 border-t border-[var(--dash-border)] mt-6">
                       <h3 className="text-sm font-bold text-text mb-2">
                         Wyloguj ze wszystkich urządzeń
                       </h3>
-                      <p className="text-sm text-text-muted max-w-sm mb-4">
+                      <p className="text-sm text-[var(--text-muted)] max-w-sm mb-4">
                         Jeśli zauważyłeś podejrzaną aktywność, wyloguj wszystkie
                         aktualnie trwające zalogowane sesje poza tą.
                       </p>
-                      <button className="px-5 py-2.5 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 font-semibold text-sm transition-colors">
+                      <button className="px-5 py-2.5 rounded-sm bg-red-500/10 text-red-500 hover:bg-red-500/20 font-semibold text-sm transition-colors">
                         Wyloguj przymusowo sesje
                       </button>
                     </div>

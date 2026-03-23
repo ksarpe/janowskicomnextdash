@@ -89,6 +89,7 @@ export function getAppointments(clientId: string) {
         .findMany({
           where: { clientId },
           orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+          include: { service: true },
         })
         .catch(() => []),
     [`appointments-${clientId}`],

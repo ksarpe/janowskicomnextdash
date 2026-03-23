@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Appointment } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { Check, X, Calendar, TrendingUp } from "lucide-react";
 import { AppointmentRow } from "./AppointmentRow";
 import { MiniCalendar } from "./MiniCalendar";
 
+export type AppointmentWithService = Prisma.AppointmentGetPayload<{
+  include: { service: true };
+}>;
+
 // ── Main component ────────────────────────────────────────────────────────────
 interface Props {
-  appointments: Appointment[];
+  appointments: AppointmentWithService[];
   pendingCount: number;
   acceptedCount: number;
   totalCount: number;
@@ -44,7 +48,7 @@ export default function AppointmentList({
       <div className="grid grid-cols-3 gap-4">
         {/* Daily velocity */}
         <div
-          className="rounded-2xl border p-5 relative overflow-hidden"
+          className="rounded-sm border p-5 relative overflow-hidden"
           style={{
             backgroundColor: "var(--dash-card)",
             borderColor: "var(--dash-border)",
@@ -69,7 +73,7 @@ export default function AppointmentList({
 
         {/* Pending */}
         <div
-          className="rounded-2xl border p-5 relative overflow-hidden"
+          className="rounded-sm border p-5 relative overflow-hidden"
           style={{
             backgroundColor:
               pendingCount > 0 ? "#f59e0b0d" : "var(--dash-card)",
@@ -109,7 +113,7 @@ export default function AppointmentList({
 
         {/* Accepted */}
         <div
-          className="rounded-2xl border p-5 relative overflow-hidden"
+          className="rounded-sm border p-5 relative overflow-hidden"
           style={{
             backgroundColor: "var(--dash-card)",
             borderColor: "var(--dash-border)",
@@ -137,7 +141,7 @@ export default function AppointmentList({
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Appointments table */}
         <div
-          className="xl:col-span-2 rounded-2xl border overflow-hidden flex flex-col"
+          className="xl:col-span-2 rounded-sm border overflow-hidden flex flex-col"
           style={{
             backgroundColor: "var(--dash-card)",
             borderColor: "var(--dash-border)",
@@ -156,7 +160,7 @@ export default function AppointmentList({
               {filteredDay !== null && (
                 <button
                   onClick={() => setFilteredDay(null)}
-                  className="text-[10px] bg-red-500/10 text-text-muted hover:text-text hover:bg-bg-alt px-2 py-1 rounded-lg border transition-colors font-bold flex items-center gap-1"
+                  className="text-[10px] bg-red-500/10 text-text-muted hover:text-text hover:bg-bg-alt px-2 py-1 rounded-sm border transition-colors font-bold flex items-center gap-1"
                   style={{
                     borderColor: "var(--dash-border)",
                   }}
@@ -178,7 +182,7 @@ export default function AppointmentList({
           {displayedAppointments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3 flex-1">
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                className="w-14 h-14 rounded-sm flex items-center justify-center"
                 style={{ backgroundColor: "var(--primary)10" }}
               >
                 <Calendar

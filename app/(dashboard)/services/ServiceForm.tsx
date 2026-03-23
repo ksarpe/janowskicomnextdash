@@ -36,7 +36,12 @@ export function ServiceForm({
     formState: { errors, isSubmitting: isFormSubmitting },
   } = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
-    defaultValues: initialData || { name: "", duration: 30, price: "", iconName: "Wrench" },
+    defaultValues: initialData || {
+      name: "",
+      duration: 30,
+      price: "",
+      iconName: "Wrench",
+    },
   });
 
   const selectedIcon = watch("iconName") || "CircleDashed";
@@ -51,7 +56,6 @@ export function ServiceForm({
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
       {title && <h3 className="text-sm font-bold text-text mb-3">{title}</h3>}
       <div className="flex flex-col items-start gap-5">
-        
         {/* Ikony do wyboru */}
         <div className="w-full">
           <label className="text-xs font-semibold text-text-muted mb-2 block">
@@ -64,8 +68,10 @@ export function ServiceForm({
                 <button
                   key={iconKey}
                   type="button"
-                  onClick={() => setValue("iconName", iconKey, { shouldDirty: true })}
-                  className={`p-3 rounded-xl border transition-all ${
+                  onClick={() =>
+                    setValue("iconName", iconKey, { shouldDirty: true })
+                  }
+                  className={`p-3 rounded-sm border transition-all ${
                     isSelected
                       ? "bg-primary/20 border-primary text-primary"
                       : "bg-dash-bg border-dash-border text-text-muted hover:bg-dash-card hover:text-text hover:border-text-muted/50"
@@ -91,7 +97,7 @@ export function ServiceForm({
               id="service-name"
               {...register("name")}
               placeholder="np. Wymiana oleju"
-              className="w-full bg-dash-bg border border-dash-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
+              className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
             />
             {errors.name && (
               <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
@@ -108,7 +114,7 @@ export function ServiceForm({
               type="number"
               id="service-duration"
               {...register("duration", { valueAsNumber: true })}
-              className="w-full bg-dash-bg border border-dash-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
+              className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
             />
             {errors.duration && (
               <p className="text-red-500 text-xs mt-1">
@@ -127,7 +133,7 @@ export function ServiceForm({
               id="service-price"
               {...register("price")}
               placeholder="np. od 150 zł"
-              className="w-full bg-dash-bg border border-dash-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
+              className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
             />
             {errors.price && (
               <p className="text-red-500 text-xs mt-1">

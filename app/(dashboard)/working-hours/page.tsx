@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import WorkingHoursManager from "./WorkingHoursManager";
+import WorkingHoursManager from "./components/WorkingHoursManager";
 
 export default async function WorkingHoursPage() {
   const session = await auth();
