@@ -43,6 +43,7 @@ model Service {
   name     String // np. "Wymiana oleju"
   duration Int // Czas trwania w minutach, kluczowe dla kalendarza! (np. 45)
   price    String? // Opcjonalne pole z ceną
+  iconName String? // Opcjonalne pole z ikoną
   isActive Boolean @default(true)
 
   appointments Appointment[]

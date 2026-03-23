@@ -3,22 +3,24 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { Service, serviceSchema } from "@/app/(dashboard)/services/definitions";
 
-export async function addService(data: {
-  name: string;
-  duration: number;
-  price?: string;
-}) {
+export async function addService(
+  data: Pick<Service, "name" | "duration" | "price" | "iconName">,
+) {
   const session = await auth();
   const clientId = session?.user?.id;
   if (!clientId) throw new Error("Nie znaleziono sesji klienta");
 
+  const validatedData = serviceSchema.parse(data);
+
   await prisma.service.create({
     data: {
       clientId,
-      name: data.name,
-      duration: data.duration,
-      price: data.price || null,
+      name: validatedData.name,
+      duration: validatedData.duration,
+      price: validatedData.price || null,
+      iconName: validatedData.iconName || null,
       isActive: true,
     },
   });
@@ -29,18 +31,21 @@ export async function addService(data: {
 
 export async function updateService(
   id: string,
-  data: { name: string; duration: number; price?: string; isActive: boolean },
+  data: Omit<Service, "id" | "clientId">,
 ) {
   const session = await auth();
   const clientId = session?.user?.id;
   if (!clientId) throw new Error("Nie znaleziono sesji klienta");
 
+  const validatedData = serviceSchema.parse(data);
+
   await prisma.service.update({
     where: { id, clientId },
     data: {
-      name: data.name,
-      duration: data.duration,
-      price: data.price || null,
+      name: validatedData.name,
+      duration: validatedData.duration,
+      price: validatedData.price || null,
+      iconName: validatedData.iconName || null,
       isActive: data.isActive,
     },
   });

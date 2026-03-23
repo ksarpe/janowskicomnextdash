@@ -1,15 +1,11 @@
-import { MessageSquare, MoreVertical } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 // ── WidgetRow ─────────────────────────────────────────────────────────────────
 export function WidgetRow({
   name,
-  version,
-  scope,
   status,
 }: {
   name: string;
-  version: string;
-  scope: string;
   status: "active" | "paused" | "live";
 }) {
   const statusConfig = {
@@ -37,9 +33,6 @@ export function WidgetRow({
           <div>
             <p className="text-sm font-semibold text-text leading-tight">
               {name}
-            </p>
-            <p className="text-[11px] text-text-muted">
-              {version} · {scope}
             </p>
           </div>
         </div>

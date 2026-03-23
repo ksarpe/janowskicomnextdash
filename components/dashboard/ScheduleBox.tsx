@@ -2,12 +2,7 @@ import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-
-// Helper to calculate minutes between "HH:MM" strings
-function getMinutesFromTime(timeStr: string) {
-  const [hours, minutes] = timeStr.split(":").map(Number);
-  return hours * 60 + minutes;
-}
+import { getMinutesFromTime } from "@/utils/helpers";
 
 export async function ScheduleBox() {
   const session = await auth();
@@ -129,8 +124,8 @@ export async function ScheduleBox() {
             href="/appointments"
             className="text-[10px] font-bold px-3 py-1.5 rounded-lg border transition-colors hover:opacity-80 uppercase tracking-wider text-text-muted"
             style={{
-               borderColor: "var(--dash-border)",
-               backgroundColor: "var(--bg-alt)",
+              borderColor: "var(--dash-border)",
+              backgroundColor: "var(--bg-alt)",
             }}
           >
             Wizyty
@@ -170,9 +165,7 @@ export async function ScheduleBox() {
                     Aktualnie / Następnie
                   </span>
                 </div>
-                <p className="text-sm font-bold text-text mt-2">
-                  {nextUpText}
-                </p>
+                <p className="text-sm font-bold text-text mt-2">{nextUpText}</p>
               </div>
 
               {/* Statystyki: Wizyty, Zajęty, Wolny czas */}

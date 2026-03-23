@@ -3,6 +3,7 @@ import { signOut, auth } from "@/auth";
 import { Power } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { getClientPlan, getWidgetThemeColor } from "@/lib/queries";
+import { Button } from "@/components/ui/Button";
 
 export default async function DashboardLayout({
   children,
@@ -31,13 +32,14 @@ export default async function DashboardLayout({
         await signOut({ redirectTo: "/login" });
       }}
     >
-      <button
+      <Button
         type="submit"
-        className="p-1.5 rounded-lg text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors"
         title="Wyloguj"
+        variant="ghost"
+        className="hover:bg-red-500/20"
       >
         <Power className="w-3.5 h-3.5" />
-      </button>
+      </Button>
     </form>
   );
 

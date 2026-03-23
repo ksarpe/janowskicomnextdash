@@ -1,7 +1,16 @@
 // next.config.ts
 import type { NextConfig } from "next";
+import fs from "fs";
+import path from "path";
+
+const packageJson = JSON.parse(
+  fs.readFileSync(path.resolve(process.cwd(), "package.json"), "utf-8"),
+);
 
 const nextConfig: NextConfig = {
+  env: {
+    APP_VERSION: packageJson.version,
+  },
   async headers() {
     return [
       {
@@ -9,8 +18,8 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            // To jest magiczna formuła dla plików SaaS:
-            value: "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+            value:
+              "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
           },
           {
             key: "X-Content-Type-Options",
@@ -18,8 +27,8 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Access-Control-Allow-Origin",
-            value: "*", // Zezwala na ładowanie skryptu na stronach Twoich klientów
-          }
+            value: "*", 
+          },
         ],
       },
     ];

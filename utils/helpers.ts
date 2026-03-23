@@ -36,3 +36,8 @@ export const todayStr = new Date().toLocaleDateString("pl-PL", {
   day: "numeric",
   month: "long",
 });
+
+export function getMinutesFromTime(timeStr: string) {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  return hours * 60 + minutes;
+}

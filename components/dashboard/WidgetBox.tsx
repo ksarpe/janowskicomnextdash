@@ -36,24 +36,8 @@ export function WidgetBox() {
             </tr>
           </thead>
           <tbody>
-            <WidgetRow
-              name="Chat Widget"
-              version="v1.0"
-              scope="Global"
-              status="live"
-            />
-            <WidgetRow
-              name="Booking System"
-              version="v—"
-              scope="Wkrótce"
-              status="paused"
-            />
-            <WidgetRow
-              name="3D Visualization"
-              version="v—"
-              scope="Wkrótce"
-              status="paused"
-            />
+            <WidgetRow name="Chat Widget" status="live" />
+            <WidgetRow name="Booking System" status="paused" />
           </tbody>
         </table>
       </div>

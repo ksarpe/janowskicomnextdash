@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import ServiceManager from "./ServiceManager";
+import { Service } from "./definitions";
 
 export default async function ServicesPage() {
   const session = await auth();
@@ -13,5 +14,5 @@ export default async function ServicesPage() {
     orderBy: { name: "asc" },
   });
 
-  return <ServiceManager initialServices={services} />;
+  return <ServiceManager initialServices={services as Service[]} />;
 }

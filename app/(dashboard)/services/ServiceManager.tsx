@@ -1,300 +1,234 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, Trash, Edit, Check, X, Clock, Banknote, Power } from "lucide-react";
+import { useState, useTransition, useOptimistic } from "react";
+import { Plus, Banknote, Loader2 } from "lucide-react";
 import {
   addService,
   updateService,
   toggleServiceActive,
   deleteService,
 } from "@/app/api/widget/booking/actions";
+import { Button } from "@/components/ui/Button";
+import { toast } from "sonner";
+import { Service, ServiceFormData } from "./definitions";
+import { ServiceForm } from "./ServiceForm";
+import { ServiceListItem } from "./ServiceListItem";
 
-export default function ServiceManager({ initialServices }: { initialServices: any[] }) {
+export default function ServiceManager({
+  initialServices,
+}: {
+  initialServices: Service[];
+}) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  
-  // Local state for the form
-  const [formData, setFormData] = useState({ name: "", duration: 30, price: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const handleAddSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await addService({
-        name: formData.name,
-        duration: formData.duration,
-        price: formData.price,
+  // Optimistic UI state
+  const [optimisticServices, addOptimisticService] = useOptimistic(
+    initialServices,
+    (state, action: { type: string; payload: any }) => {
+      switch (action.type) {
+        case "ADD":
+          return [...state, action.payload];
+        case "EDIT":
+          return state.map((s) =>
+            s.id === action.payload.id ? { ...s, ...action.payload } : s,
+          );
+        case "DELETE":
+          return state.filter((s) => s.id !== action.payload.id);
+        case "TOGGLE":
+          return state.map((s) =>
+            s.id === action.payload.id ? { ...s, isActive: !s.isActive } : s,
+          );
+        default:
+          return state;
+      }
+    },
+  );
+
+  const handleAddSubmit = (data: ServiceFormData) => {
+    startTransition(async () => {
+      addOptimisticService({
+        type: "ADD",
+        payload: {
+          id: `temp-${Date.now()}`,
+          name: data.name,
+          duration: data.duration,
+          price: data.price || "",
+          iconName: data.iconName || "",
+          isActive: true, // by default new services are active
+        },
       });
       setIsAdding(false);
-      setFormData({ name: "", duration: 30, price: "" });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleEditSubmit = async (e: React.FormEvent, id: string, isActive: boolean) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await updateService(id, {
-        name: formData.name,
-        duration: formData.duration,
-        price: formData.price,
-        isActive,
-      });
-      setEditingId(null);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleEditClick = (service: any) => {
-    setFormData({
-      name: service.name,
-      duration: service.duration,
-      price: service.price || "",
-    });
-    setEditingId(service.id);
-  };
-
-  const handleToggle = async (id: string, currentStatus: boolean) => {
-    try {
-      await toggleServiceActive(id, !currentStatus);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (confirm("Czy na pewno chcesz usunąć tę usługę? Upewnij się, że nie ma do niej przypisanych aktywnych rezerwacji.")) {
       try {
-        await deleteService(id);
+        await addService({
+          name: data.name,
+          duration: data.duration,
+          price: data.price || "",
+          iconName: data.iconName || "",
+        });
+        toast.success("Dodano usługę");
       } catch (error) {
         console.error(error);
+        toast.error("Wystąpił błąd podczas dodawania usługi");
       }
-    }
+    });
+  };
+
+  const handleEditSubmit = (data: ServiceFormData, service: Service) => {
+    startTransition(async () => {
+      addOptimisticService({
+        type: "EDIT",
+        payload: {
+          id: service.id,
+          name: data.name,
+          duration: data.duration,
+          price: data.price || "",
+          iconName: data.iconName || "",
+        },
+      });
+      setEditingId(null);
+      try {
+        await updateService(service.id, {
+          name: data.name,
+          duration: data.duration,
+          price: data.price || "",
+          iconName: data.iconName || "",
+          isActive: service.isActive,
+        });
+        toast.success("Zapisano zmiany");
+      } catch (error) {
+        console.error(error);
+        toast.error("Wystąpił błąd podczas edycji usługi");
+      }
+    });
+  };
+
+  const handleToggle = (id: string, currentStatus: boolean) => {
+    startTransition(async () => {
+      addOptimisticService({
+        type: "TOGGLE",
+        payload: { id },
+      });
+      try {
+        await toggleServiceActive(id, !currentStatus);
+        toast.success("Status usługi został zmieniony");
+      } catch (error) {
+        console.error(error);
+        toast.error("Wystąpił błąd podczas zmiany statusu");
+      }
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    startTransition(async () => {
+      addOptimisticService({
+        type: "DELETE",
+        payload: { id },
+      });
+      try {
+        await deleteService(id);
+        toast.success("Usługa usunięta");
+      } catch (error) {
+        console.error(error);
+        toast.error("Wystąpił błąd podczas usuwania usługi");
+      }
+    });
   };
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="p-6 max-w-5xl mx-auto">
+      <div className="p-8 w-full mx-auto">
         <div className="flex justify-between items-start md:items-center mb-8 flex-col md:flex-row gap-4">
           <div>
-            <h1 className="text-2xl font-black text-text">Usługi</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-medium text-text">Usługi</h1>
+              {isPending && (
+                <Loader2 className="w-5 h-5 text-text-muted animate-spin" />
+              )}
+            </div>
             <p className="text-sm text-text-muted mt-0.5 max-w-md">
-              Zarządzaj ofertą, którą widzą Twoi klienci w widżecie rezerwacji. Określ czas trwania, aby kalendarz poprawnie blokował terminy.
+              Zarządzaj ofertą, którą widzą Twoi klienci w widżecie rezerwacji.
+              Określ czas trwania, aby kalendarz poprawnie blokował terminy.
             </p>
           </div>
           {!isAdding && (
-            <button
-              onClick={() => {
-                setFormData({ name: "", duration: 30, price: "" });
-                setIsAdding(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--primary)] text-white font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-sm"
+            <Button
+              onClick={() => setIsAdding(true)}
+              variant="default"
+              disabled={isPending}
             >
               <Plus className="w-4 h-4" />
               Dodaj usługę
-            </button>
+            </Button>
           )}
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div
+          className={`flex flex-col gap-2 transition-all duration-200 ${isPending ? "opacity-80" : "opacity-100"}`}
+        >
           {isAdding && (
-            <form
+            <ServiceForm
               onSubmit={handleAddSubmit}
-              className="p-5 rounded-2xl border bg-[var(--dash-card)] border-[var(--dash-border)] flex flex-col gap-4 shadow-sm animate-in fade-in slide-in-from-top-4"
-            >
-              <h3 className="text-sm font-bold text-text mb-1">Nowa usługa</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-xs font-semibold text-text-muted mb-1 block">Nazwa usługi *</label>
-                  <input
-                    required
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="np. Wymiana oleju"
-                    className="w-full bg-[var(--dash-bg)] border border-[var(--dash-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--primary)] transition-colors text-text"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-text-muted mb-1 block">Czas (minuty) *</label>
-                  <input
-                    required
-                    type="number"
-                    min="5"
-                    step="5"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-[var(--dash-bg)] border border-[var(--dash-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--primary)] transition-colors text-text"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-text-muted mb-1 block">Cena (opcjonalnie)</label>
-                  <input
-                    type="text"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    placeholder="np. od 150 zł"
-                    className="w-full bg-[var(--dash-bg)] border border-[var(--dash-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--primary)] transition-colors text-text"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 mt-2 border-t border-[var(--dash-border)] pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsAdding(false)}
-                  className="px-5 py-2.5 text-sm font-semibold text-text-muted hover:text-text transition-colors"
-                  disabled={isSubmitting}
-                >
-                  Anuluj
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-2.5 bg-[var(--primary)] text-white text-sm font-bold rounded-xl transition-transform active:scale-95 flex items-center gap-2 disabled:opacity-50"
-                >
-                  <Check className="w-4 h-4" /> Dodaj usługę
-                </button>
-              </div>
-            </form>
+              onCancel={() => setIsAdding(false)}
+              isSubmitting={isPending}
+              title="Nowa usługa"
+              submitText="Dodaj usługę"
+              className="p-5 rounded-2xl border bg-dash-card border-dash-border flex flex-col gap-4 shadow-sm animate-in fade-in slide-in-from-top-4"
+            />
           )}
 
-          {initialServices.length === 0 && !isAdding && (
-            <div className="flex flex-col items-center justify-center py-16 gap-4 border border-dashed border-[var(--dash-border)] rounded-2xl bg-[var(--dash-card)]/50">
+          {optimisticServices.length === 0 && !isAdding && (
+            <div className="flex flex-col items-center justify-center py-16 gap-4 border border-dashed border-dash-border rounded-2xl bg-(--dash-card)/50">
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center"
                 style={{ backgroundColor: "var(--primary)10" }}
               >
-                <Banknote className="w-6 h-6" style={{ color: "var(--primary)" }} />
+                <Banknote
+                  className="w-6 h-6"
+                  style={{ color: "var(--primary)" }}
+                />
               </div>
               <div className="text-center">
                 <p className="text-sm font-bold text-text mb-1">Brak usług</p>
                 <p className="text-xs text-text-muted max-w-xs">
-                  Dodaj pierwszą usługę, aby klienci mogli się na nią umawiać w widżecie.
+                  Dodaj pierwszą usługę, aby klienci mogli się na nią umawiać w
+                  widżecie.
                 </p>
               </div>
             </div>
           )}
 
-          {initialServices.map((service) => (
+          {optimisticServices.map((service) => (
             <div
               key={service.id}
-              className={`p-5 rounded-2xl border transition-all ${
-                service.isActive ? "bg-[var(--dash-card)]" : "bg-[var(--dash-bg)] opacity-70 grayscale-[30%]"
+              className={`p-4 rounded-2xl border transition-all ${
+                service.isActive
+                  ? "bg-dash-card"
+                  : "bg-dash-bg opacity-70 grayscale-30"
               }`}
               style={{ borderColor: "var(--dash-border)" }}
             >
               {editingId === service.id ? (
-                <form onSubmit={(e) => handleEditSubmit(e, service.id, service.isActive)} className="flex flex-col gap-4 animate-in fade-in">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-xs font-semibold text-text-muted mb-1 block">Nazwa usługi</label>
-                      <input
-                        required
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full bg-[var(--dash-bg)] border border-[var(--dash-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--primary)] text-text transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-semibold text-text-muted mb-1 block">Czas (minuty)</label>
-                      <input
-                        required
-                        type="number"
-                        min="5"
-                        step="5"
-                        value={formData.duration}
-                        onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 0 })}
-                        className="w-full bg-[var(--dash-bg)] border border-[var(--dash-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--primary)] text-text transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-semibold text-text-muted mb-1 block">Cena</label>
-                      <input
-                        type="text"
-                        value={formData.price}
-                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                        className="w-full bg-[var(--dash-bg)] border border-[var(--dash-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--primary)] text-text transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-3 mt-2 border-t border-[var(--dash-border)] pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setEditingId(null)}
-                      className="px-5 py-2.5 text-sm font-semibold text-text-muted hover:text-text transition-colors"
-                      disabled={isSubmitting}
-                    >
-                      Anuluj
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex items-center gap-2 px-6 py-2.5 bg-[var(--primary)] text-white text-sm font-bold rounded-xl transition-transform active:scale-95 disabled:opacity-50"
-                    >
-                      <Check className="w-4 h-4" /> Zapisz zmiany
-                    </button>
-                  </div>
-                </form>
+                <ServiceForm
+                  initialData={{
+                    name: service.name,
+                    duration: service.duration,
+                    price: service.price || "",
+                  }}
+                  onSubmit={(data) => handleEditSubmit(data, service)}
+                  onCancel={() => setEditingId(null)}
+                  isSubmitting={isPending}
+                  submitText="Zapisz zmiany"
+                />
               ) : (
-                <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
-                  <div className="flex-1 min-w-[200px]">
-                    <h4 className="font-bold text-text flex items-center gap-2.5 text-base">
-                      {service.name}
-                      {!service.isActive && (
-                        <span className="text-[10px] uppercase font-black tracking-widest px-2.5 py-1 rounded-md bg-red-500/10 text-red-500">
-                          Wyłączona
-                        </span>
-                      )}
-                    </h4>
-                    <div className="flex items-center gap-5 mt-2.5 text-xs font-medium text-text-muted">
-                      <span className="flex items-center gap-1.5 opacity-80">
-                        <Clock className="w-4 h-4" /> {service.duration} min
-                      </span>
-                      {service.price && (
-                        <span className="flex items-center gap-1.5 opacity-80">
-                          <Banknote className="w-4 h-4" /> {service.price}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleToggle(service.id, service.isActive)}
-                      className={`p-2.5 rounded-xl flex items-center justify-center transition-colors ${
-                        service.isActive 
-                          ? "text-green-500 hover:bg-green-500/10" 
-                          : "text-text-muted hover:text-green-500 hover:bg-green-500/10"
-                      }`}
-                      title={service.isActive ? "Wyłącz" : "Włącz"}
-                    >
-                      <Power className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleEditClick(service)}
-                      className="p-2.5 rounded-xl text-text-muted hover:text-[var(--primary)] hover:bg-[var(--primary)]/10 transition-colors"
-                      title="Edytuj"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(service.id)}
-                      className="p-2.5 rounded-xl text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
-                      title="Usuń"
-                    >
-                      <Trash className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                <ServiceListItem
+                  service={service}
+                  onToggle={handleToggle}
+                  onEdit={(s) => setEditingId(s.id)}
+                  onDelete={handleDelete}
+                  isPending={isPending}
+                />
               )}
             </div>
           ))}
