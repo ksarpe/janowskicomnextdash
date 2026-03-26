@@ -139,18 +139,18 @@ export default function ServiceManager({
   return (
     <div className="h-full overflow-y-auto">
       <div className="p-8 w-full mx-auto">
-        <div className="flex justify-between items-start md:items-center mb-8 flex-col md:flex-row gap-4">
+        <div className="flex justify-between items-start md:items-center mb-4 flex-col md:flex-row gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-medium text-text">Usługi</h1>
+              <p className="text-sm text-text-muted mt-0.5 max-w-lg">
+                Dodawaj, usuwaj i edytuj usługi, które widzą Twoi klienci w
+                widżecie rezerwacji. Określ czas trwania, aby kalendarz
+                poprawnie blokował terminy.
+              </p>
               {isPending && (
                 <Loader2 className="w-5 h-5 text-text-muted animate-spin" />
               )}
             </div>
-            <p className="text-sm text-text-muted mt-0.5 max-w-md">
-              Zarządzaj ofertą, którą widzą Twoi klienci w widżecie rezerwacji.
-              Określ czas trwania, aby kalendarz poprawnie blokował terminy.
-            </p>
           </div>
           {!isAdding && (
             <Button

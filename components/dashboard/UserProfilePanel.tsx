@@ -294,11 +294,11 @@ export default function UserProfilePanel({
                       </button>
                     </div>
 
-                    <div className="pt-6 border-t border-[var(--dash-border)] mt-6">
+                    <div className="pt-6 border-t border-dash-border mt-6">
                       <h3 className="text-sm font-bold text-text mb-2">
                         Wyloguj ze wszystkich urządzeń
                       </h3>
-                      <p className="text-sm text-[var(--text-muted)] max-w-sm mb-4">
+                      <p className="text-sm text-text-muted max-w-sm mb-4">
                         Jeśli zauważyłeś podejrzaną aktywność, wyloguj wszystkie
                         aktualnie trwające zalogowane sesje poza tą.
                       </p>

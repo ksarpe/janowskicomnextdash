@@ -18,6 +18,8 @@ import {
   Mail,
   Settings,
   GalleryVerticalEnd,
+  Clock,
+  Code,
 } from "lucide-react";
 
 const data = {
@@ -32,38 +34,41 @@ const data = {
       title: "Dashboard",
       url: "/",
       icon: <Home />,
-      isActive: false,
     },
     {
       title: "Wiadomości",
       url: "/messages",
       icon: <Mail />,
-      isActive: false,
     },
     {
       title: "Kalendarz",
       url: "/appointments",
       icon: <Calendar />,
-      isActive: false,
     },
     {
       title: "Usługi",
       url: "/services",
       icon: <Briefcase />,
-      isActive: false,
     },
     {
       title: "Klienci",
       url: "/clients",
       icon: <Users />,
-      isActive: false,
+    },
+    {
+      title: "Godziny pracy",
+      url: "/working-hours",
+      icon: <Clock />,
     },
     {
       title: "Ustawienia",
       url: "/settings",
-      icon: <Settings 
-      />,
-      isActive: false,
+      icon: <Settings />,
+    },
+    {
+      title: "Integracja",
+      url: "/integration",
+      icon: <Code />,
     },
   ],
 };
@@ -85,13 +90,12 @@ export function AppSidebar({
   const user = {
     name: userName,
     email: userEmail,
-    avatar: "/avatars/shadcn.jpg",
   };
 
   return (
     <Sidebar collapsible="offcanvas" variant="sidebar" {...props}>
       <SidebarHeader className="h-14 flex items-center justify-center border-b border-dash-border px-4 py-2">
-        <TeamSwitcher teams={data.teams} plan={plan}/>
+        <TeamSwitcher teams={data.teams} plan={plan} />
       </SidebarHeader>
       <SidebarContent className="gap-0 py-2">
         <NavMain items={data.navMain} />

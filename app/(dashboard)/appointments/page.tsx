@@ -21,12 +21,11 @@ export default async function AppointmentsPage() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-8 w-full mx-auto">
         {/* Header */}
-        <div className="flex items-end justify-between mb-7">
+        <div className="flex items-end justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-black text-text">Harmonogram Wizyt</h1>
-            <p className="text-sm text-text-muted mt-0.5 capitalize">
+            <p className="text-md font-medium text-text-muted uppercase">
               {todayStr}
             </p>
           </div>
