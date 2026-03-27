@@ -40,7 +40,7 @@ export default function SettingsForm({
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"chat" | "booking" | "3d">("chat");
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setIsSaving(true);
 

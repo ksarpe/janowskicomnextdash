@@ -8,12 +8,12 @@ export default function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError(null);
     setIsPending(true);
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
 
     try {
       const result = await registerUser(formData);

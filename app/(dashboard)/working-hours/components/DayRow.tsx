@@ -11,7 +11,7 @@ export function DayRow({
   return (
     <div
       key={day.dayOfWeek}
-      className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:bg-dash-bg focus-within:bg-dash-bg group"
+      className="px-4 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:bg-dash-bg focus-within:bg-dash-bg group"
     >
       <div className="flex items-center gap-4 w-full sm:w-auto">
         <label className="relative inline-flex items-center cursor-pointer shrink-0">

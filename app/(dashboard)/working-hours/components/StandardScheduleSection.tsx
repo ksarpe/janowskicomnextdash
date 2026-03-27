@@ -28,10 +28,10 @@ export function StandardScheduleSection({
 }: StandardScheduleSectionProps) {
   return (
     <section className="col-span-2">
-      <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-6">
+      <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
         Stały grafik
       </h2>
-      <div className="space-y-6">
+      <div>
         <div className="p-1 rounded-sm border border-dash-border bg-dash-card shadow-sm overflow-hidden">
           <div className="divide-y divide-dash-border flex flex-col">
             {hours.map((day) => (

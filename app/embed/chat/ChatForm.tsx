@@ -164,7 +164,7 @@ export default function ChatForm({ clientId, initialConfig }: ChatFormProps) {
     window.parent.postMessage("close-chat-bubble-widget", "*");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     setIsSubmitting(true);

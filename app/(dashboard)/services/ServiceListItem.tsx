@@ -1,16 +1,6 @@
 import { Clock, Banknote, Power, Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import { Service } from "./definitions";
 import { ServiceIcon } from "@/components/services/ServiceIcon";
 
@@ -79,38 +69,18 @@ export function ServiceListItem({
         >
           <Edit className="w-4 h-4" />
         </Button>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <ConfirmDeleteButton
+          onConfirm={() => onDelete(service.id)}
+          title="Czy na pewno chcesz usunąć tę usługę?"
+          description="Upewnij się, że nie ma do niej przypisanych aktywnych rezerwacji. Tej akcji nie można cofnąć, a usługa zniknie z widżetu rezerwacji."
+          confirmLabel="Tak, usuń usługę"
+          isPending={isPending}
+          trigger={
             <Button title="Usuń" variant="outline">
               <Trash className="w-4 h-4" />
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Czy na pewno chcesz usunąć tę usługę?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                Upewnij się, że nie ma do niej przypisanych aktywnych
-                rezerwacji. Tej akcji nie można cofnąć, a usługa zniknie z
-                widżetu rezerwacji.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              {/* Zwykłe zamknięcie modala - nic nie robi oprócz schowania okna */}
-              <AlertDialogCancel disabled={isPending}>Anuluj</AlertDialogCancel>
-
-              {/* Akcja właściwa - tutaj wywołujemy nasze oczyszczone handleDelete */}
-              <AlertDialogAction
-                onClick={() => onDelete(service.id)}
-                disabled={isPending}
-                className="bg-red-600 hover:bg-red-700 text-white" // Destrukcyjna akcja powinna być czerwona
-              >
-                {isPending ? "Usuwanie..." : "Tak, usuń usługę"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          }
+        />
       </div>
     </div>
   );

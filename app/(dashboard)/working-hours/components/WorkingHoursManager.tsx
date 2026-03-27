@@ -85,9 +85,8 @@ export default function WorkingHoursManager({
     }
   };
 
-  const handleAddException = async (e: React.FormEvent) => {
+  const handleAddException = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    console.log(exceptionForm, isSubmittingException)
     if (!exceptionForm.date || isSubmittingException) return;
 
     setIsSubmittingException(true);
