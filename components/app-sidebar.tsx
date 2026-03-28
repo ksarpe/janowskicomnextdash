@@ -20,6 +20,7 @@ import {
   GalleryVerticalEnd,
   Clock,
   Code,
+  TrendingUp,
 } from "lucide-react";
 
 const data = {
@@ -36,6 +37,11 @@ const data = {
       icon: <Home />,
     },
     {
+      title: "Statystyki",
+      url: "/stats",
+      icon: <TrendingUp />,
+    },
+    {
       title: "Wiadomości",
       url: "/messages",
       icon: <Mail />,
@@ -49,11 +55,6 @@ const data = {
       title: "Usługi",
       url: "/services",
       icon: <Briefcase />,
-    },
-    {
-      title: "Klienci",
-      url: "/clients",
-      icon: <Users />,
     },
     {
       title: "Godziny pracy",

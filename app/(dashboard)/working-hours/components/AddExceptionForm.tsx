@@ -18,6 +18,7 @@ interface ExceptionForm {
   allDay: boolean;
   startTime: string;
   endTime: string;
+  title: string;
 }
 
 interface AddExceptionFormProps {
@@ -39,7 +40,7 @@ export function AddExceptionForm({
   return (
     <form
       onSubmit={handleAddException}
-      className="p-4 sm:p-5 border border-dash-border bg-dash-card rounded-sm shadow-sm mt-4"
+      className="p-4 sm:p-5 border border-dash-border bg-dash-card rounded-sm shadow-sm"
     >
       <div className="flex flex-wrap items-center gap-3">
         {/* Date picker */}
@@ -130,8 +131,22 @@ export function AddExceptionForm({
           />
         </div>
 
-        {/* Submit — pushed to right on larger screens */}
-        <div className="sm:ml-auto">
+        {/* Title note input */}
+        <div className="w-full sm:w-auto flex-1 min-w-[150px] max-w-xs lg:max-w-sm ml-0 sm:ml-auto">
+          <Input
+            type="text"
+            placeholder="Notatka dla siebie"
+            value={exceptionForm.title}
+            onChange={(e) =>
+              setExceptionForm({ ...exceptionForm, title: e.target.value })
+            }
+            className="h-9 w-full bg-dash-bg text-sm placeholder:text-text-muted/60"
+            maxLength={60}
+          />
+        </div>
+
+        {/* Submit */}
+        <div className="shrink-0">
           <Button type="submit" disabled={isSubmittingException} size="sm">
             <Plus className="w-4 h-4" />
             {isSubmittingException ? "Dodawanie..." : "Dodaj blokadę"}

@@ -29,7 +29,9 @@ export default async function DashboardLayout({
       plan={plan}
       themeColor={themeColor}
     >
-      {children}
+      <div className="p-8 w-full mx-auto h-full overflow-y-auto">
+        {children}
+      </div>
     </DashboardShell>
   );
 }

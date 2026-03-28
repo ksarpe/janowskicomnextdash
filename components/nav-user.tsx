@@ -58,7 +58,7 @@ export function NavUser({
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-hover data-[state=open]:text-sidebar-hover-foreground"
+                className="data-[state=open]:bg-sidebar-hover data-[state=open]:text-sidebar-hover-foreground cursor-pointer"
               >
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate text-xs">{user.email}</span>

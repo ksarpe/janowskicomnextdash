@@ -43,7 +43,7 @@ export function TeamSwitcher({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-hover data-[state=open]:text-sidebar-hover-foreground"
+              className="data-[state=open]:bg-sidebar-hover data-[state=open]:text-sidebar-hover-foreground cursor-pointer"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-sm bg-sidebar-primary text-sidebar-primary-foreground">
                 {activeTeam.logo}

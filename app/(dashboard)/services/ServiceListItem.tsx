@@ -31,9 +31,9 @@ export function ServiceListItem({
       <div className="flex flex-col flex-1 min-w-0">
         {/* Top Row: Name, Description, and Switch */}
         <div className="flex items-start justify-between gap-4 w-full">
-          <div className="flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 flex-1">
             {/* Name + Status Tag */}
-            <h4 className="font-bold text-text flex items-center gap-2 text-lg flex-wrap">
+            <h4 className="font-bold text-text flex items-center gap-2 text-[17px] flex-wrap leading-tight">
               {service.name}
               {/* Show 'Inactive' tag if the service is explicitly turned off */}
               {!service.isActive && (
@@ -43,11 +43,16 @@ export function ServiceListItem({
               )}
             </h4>
 
-            {/* Temporary Service Description */}
-            <p className="text-sm text-text-muted mt-1 leading-snug max-w-lg">
-              Krótki opis tej usługi, który pomoże klientom w podjęciu decyzji
-              podczas procesu rezerwacji.
-            </p>
+            {/* Service Description */}
+            {service.description ? (
+              <p className="text-sm text-text-muted mt-1.5 leading-relaxed max-w-2xl line-clamp-2 pr-4">
+                {service.description}
+              </p>
+            ) : (
+              <p className="text-[13px] text-text-muted/40 font-medium italic mt-1.5 leading-snug max-w-lg">
+                Brak opisu usługi.
+              </p>
+            )}
           </div>
 
           {/* Toggle switch for service active status */}

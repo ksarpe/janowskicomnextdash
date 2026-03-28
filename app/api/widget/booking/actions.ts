@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { Service, serviceSchema } from "@/app/(dashboard)/services/definitions";
 
 export async function addService(
-  data: Pick<Service, "name" | "duration" | "price" | "iconName">,
+  data: Pick<Service, "name" | "description" | "duration" | "price" | "iconName">,
 ) {
   const session = await auth();
   const clientId = session?.user?.id;
@@ -18,6 +18,7 @@ export async function addService(
     data: {
       clientId,
       name: validatedData.name,
+      description: validatedData.description || null,
       duration: validatedData.duration,
       price: validatedData.price || null,
       iconName: validatedData.iconName || null,
@@ -43,6 +44,7 @@ export async function updateService(
     where: { id, clientId },
     data: {
       name: validatedData.name,
+      description: validatedData.description || null,
       duration: validatedData.duration,
       price: validatedData.price || null,
       iconName: validatedData.iconName || null,
@@ -127,6 +129,7 @@ export async function addBlockedTime(data: {
   allDay: boolean;
   startTime?: string;
   endTime?: string;
+  title?: string;
 }) {
   try {
     const session = await auth();
@@ -142,6 +145,7 @@ export async function addBlockedTime(data: {
         allDay: data.allDay,
         startTime: data.allDay ? null : data.startTime,
         endTime: data.allDay ? null : data.endTime,
+        title: data.title || null,
       },
     });
 

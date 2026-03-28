@@ -40,11 +40,12 @@ model Service {
   clientId String
   client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  name     String // np. "Wymiana oleju"
-  duration Int // Czas trwania w minutach, kluczowe dla kalendarza! (np. 45)
-  price    String? // Opcjonalne pole z ceną
-  iconName String? // Opcjonalne pole z ikoną
-  isActive Boolean @default(true)
+  name        String // np. "Wymiana oleju"
+  description String? // Opcjonalny opis usługi np. "Obejmuje kompleksowy przegląd"
+  duration    Int // Czas trwania w minutach, kluczowe dla kalendarza! (np. 45)
+  price       String? // Opcjonalne pole z ceną
+  iconName    String? // Opcjonalne pole z ikoną
+  isActive    Boolean @default(true)
 
   appointments Appointment[]
 }
@@ -73,6 +74,7 @@ model BlockedTime {
   // Te pola mogą być puste (nullable), jeśli allDay jest true
   startTime String? // np. "12:00"
   endTime   String? // np. "14:00"
+  title     String? // Przykładowa nazwa własna
 
   createdAt DateTime @default(now())
 

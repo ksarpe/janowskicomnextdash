@@ -39,6 +39,7 @@ export function ServiceForm({
     resolver: zodResolver(serviceSchema),
     defaultValues: initialData || {
       name: "",
+      description: "",
       duration: 30,
       price: "",
       iconName: "Wrench",
@@ -76,6 +77,28 @@ export function ServiceForm({
               {errors.name && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label
+                htmlFor="service-description"
+                className="text-xs font-semibold text-text mb-1 block"
+              >
+                Opis usługi (opcjonalnie)
+              </label>
+              <textarea
+                id="service-description"
+                {...register("description")}
+                placeholder="Dodaj krótki opis usługi, np. Zakres wchodzących w nią prac..."
+                rows={3}
+                className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text resize-none"
+              />
+              {errors.description && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.description.message}
                 </p>
               )}
             </div>
