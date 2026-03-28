@@ -40,8 +40,8 @@ export function NavMain({
                 tooltip={item.title}
               >
                 <Link href={item.url}>
-                  {item.icon}
-                  <span>{item.title}</span>
+                  <span className="mr-1">{item.icon}</span>
+                  {item.title}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

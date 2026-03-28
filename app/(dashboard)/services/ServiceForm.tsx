@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { serviceSchema, ServiceFormData } from "./definitions";
 import { iconMap, ServiceIcon } from "@/components/services/ServiceIcon";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 interface ServiceFormProps {
   initialData?: ServiceFormData;
@@ -23,7 +25,6 @@ export function ServiceForm({
   onSubmit,
   onCancel,
   isSubmitting,
-  title,
   submitText = "Zapisz",
   className = "flex flex-col gap-4 animate-in fade-in",
 }: ServiceFormProps) {
@@ -53,15 +54,79 @@ export function ServiceForm({
   }, [initialData, reset]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      {title && <h3 className="text-sm font-bold text-text mb-3">{title}</h3>}
-      <div className="flex flex-col items-start gap-5">
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className={className}>
+        <div className="flex flex-col items-start">
+          {/* Rest of the data */}
+          <div className="flex flex-col w-full gap-4">
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="service-name"
+                className="text-xs font-semibold text-text mb-1 block"
+              >
+                Nazwa usługi *
+              </label>
+              <Input
+                id="service-name"
+                {...register("name")}
+                placeholder="np. Wymiana oleju"
+                className="w-full bg-dash-bg border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            {/* Duration */}
+            <div>
+              <label
+                htmlFor="service-duration"
+                className="text-xs font-semibold text-text mb-1 block"
+              >
+                Czas (minuty) *
+              </label>
+              <Input
+                type="number"
+                id="service-duration"
+                {...register("duration", { valueAsNumber: true })}
+                className="w-full bg-dash-bg border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
+              />
+              {errors.duration && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.duration.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="service-price"
+                className="text-xs font-semibold text-text mb-1 block"
+              >
+                Cena (opcjonalnie)
+              </label>
+              <Input
+                id="service-price"
+                {...register("price")}
+                placeholder="np. od 150 zł"
+                className="w-full bg-dash-bg border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
+              />
+              {errors.price && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.price.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
         {/* Ikony do wyboru */}
         <div className="w-full">
-          <label className="text-xs font-semibold text-text-muted mb-2 block">
+          <label className="text-xs font-semibold text-text mb-2 block">
             Wybierz ikonę usługi
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex justify-between">
             {Object.keys(iconMap).map((iconKey) => {
               const isSelected = selectedIcon === iconKey;
               return (
@@ -84,78 +149,20 @@ export function ServiceForm({
             })}
           </div>
         </div>
-
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label
-              htmlFor="service-name"
-              className="text-xs font-semibold text-text-muted mb-1 block"
-            >
-              Nazwa usługi *
-            </label>
-            <input
-              id="service-name"
-              {...register("name")}
-              placeholder="np. Wymiana oleju"
-              className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="service-duration"
-              className="text-xs font-semibold text-text-muted mb-1 block"
-            >
-              Czas (minuty) *
-            </label>
-            <input
-              type="number"
-              id="service-duration"
-              {...register("duration", { valueAsNumber: true })}
-              className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
-            />
-            {errors.duration && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.duration.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="service-price"
-              className="text-xs font-semibold text-text-muted mb-1 block"
-            >
-              Cena (opcjonalnie)
-            </label>
-            <input
-              id="service-price"
-              {...register("price")}
-              placeholder="np. od 150 zł"
-              className="w-full bg-dash-bg border border-dash-border rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors text-text"
-            />
-            {errors.price && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.price.message}
-              </p>
-            )}
-          </div>
+        <div className="flex justify-end gap-3 mt-2 border-t pt-4">
+          <Button
+            type="button"
+            onClick={onCancel}
+            variant="outline"
+            disabled={isSubmitting || isFormSubmitting}
+          >
+            Anuluj
+          </Button>
+          <Button type="submit" disabled={isSubmitting || isFormSubmitting}>
+            <Check className="w-4 h-4" /> {submitText}
+          </Button>
         </div>
-      </div>
-      <div className="flex justify-end gap-3 mt-2 border-t border-dash-border pt-4">
-        <Button
-          type="button"
-          onClick={onCancel}
-          variant="outline"
-          disabled={isSubmitting || isFormSubmitting}
-        >
-          Anuluj
-        </Button>
-        <Button type="submit" disabled={isSubmitting || isFormSubmitting}>
-          <Check className="w-4 h-4" /> {submitText}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }

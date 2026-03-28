@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { ChevronRight, PlusIcon } from "lucide-react";
 
 export function TeamSwitcher({
   teams,
@@ -43,7 +43,7 @@ export function TeamSwitcher({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-hover data-[state=open]:text-sidebar-hover-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-sm bg-sidebar-primary text-sidebar-primary-foreground">
                 {activeTeam.logo}
@@ -52,7 +52,7 @@ export function TeamSwitcher({
                 <span className="truncate font-medium">{activeTeam.name}</span>
                 <span className="truncate text-xs">Plan {plan}</span>
               </div>
-              <ChevronsUpDownIcon className="ml-auto" />
+              <ChevronRight className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -62,7 +62,7 @@ export function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Teams
+              Websites
             </DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem
@@ -82,7 +82,7 @@ export function TeamSwitcher({
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <PlusIcon className="size-4" />
               </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
+              <div className="font-medium text-muted-foreground">Add website</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

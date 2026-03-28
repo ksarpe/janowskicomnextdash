@@ -25,7 +25,7 @@ import {
 const data = {
   teams: [
     {
-      name: "Janowski",
+      name: "kasperjanowski.com",
       logo: <GalleryVerticalEnd />,
     },
   ],
@@ -93,14 +93,14 @@ export function AppSidebar({
   };
 
   return (
-    <Sidebar collapsible="offcanvas" variant="sidebar" {...props}>
-      <SidebarHeader className="h-14 flex items-center justify-center border-b border-dash-border px-4 py-2">
+    <Sidebar collapsible="icon" variant="sidebar" {...props}>
+      <SidebarHeader className="h-14 flex items-center justify-center bg-dash-card">
         <TeamSwitcher teams={data.teams} plan={plan} />
       </SidebarHeader>
-      <SidebarContent className="gap-0 py-2">
+      <SidebarContent className="py-2">
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter className="border-t border-dash-border p-2">
+      <SidebarFooter>
         <NavUser user={user} plan={plan} />
       </SidebarFooter>
       <SidebarRail />

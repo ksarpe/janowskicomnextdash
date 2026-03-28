@@ -24,6 +24,7 @@ import {
   CreditCardIcon,
   BellIcon,
   LogOutIcon,
+  ChevronRight,
 } from "lucide-react";
 import UserProfilePanel from "./dashboard/UserProfilePanel";
 import { logoutAction } from "@/app/(dashboard)/actions";
@@ -57,13 +58,12 @@ export function NavUser({
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-[state=open]:bg-sidebar-hover data-[state=open]:text-sidebar-hover-foreground"
               >
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
-                <ChevronsUpDownIcon className="ml-auto size-4" />
+                <ChevronRight className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent

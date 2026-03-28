@@ -36,13 +36,10 @@ export default function DashboardShell({
           themeColor={themeColor}
         />
 
-        <SidebarInset style={{ backgroundColor: "var(--sidebar)" }}>
-          <header className="flex h-14 shrink-0 items-center justify-between border-b px-4 transition-[width,height] ease-linear">
+        <SidebarInset style={{ backgroundColor: "var(--dash-card)" }}>
+          <header className="flex h-14 shrink-0 items-center justify-between px-4 transition-[width,height] ease-linear">
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="-ml-1" />
-              <h1 className="text-xs font-medium uppercase">
-                {pathname.split("/")[1]}
-              </h1>
+              <SidebarTrigger className="" />
             </div>
           </header>
           <main
